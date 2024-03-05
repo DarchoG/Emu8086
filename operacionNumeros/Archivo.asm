@@ -6,10 +6,15 @@
     
     primerMensaje db "Escribe el primer numero: ", "$"
     segundoMensaje db "Escribe el segundo numero: ", "$"
-    Resultado db " + "
-    tercerMensaje db 10, "Resultado: "                                         
-    primerNumero db ? ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
-    segundoNumero db ?                                      
+    tercerMensaje db 10, "Resultado: " 
+                                            
+    primerNumero db "$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
+    segundoNumero db "$$$$$"
+    
+    primerValor db  ?
+    segundoValor db ?
+    
+    Resultado db " + ", "$"                                        
     
     ; Los labels son direcciones susceptibles a ser usadas con el objetivo de servir como un operador de instruccion, en los casos previos serian mis saltos incondicionales
     ; Es requerido el : y un identificador.
@@ -21,15 +26,15 @@
     mov ds, ax ; No se pueden usar las variables directamente a mis registros de segmentos, DS (Data Segment)
                    
     mov ah, 09h ; Imprimir un string con 09, cargarlo en mi segmentos de datos con mi operador lea
-    lea dx, primerMensaje ; Load Effective Address, cargar una direccion de mi variable Mensaje y almacenarla en dx, para su 
-    int 21h         
-                                  
+    lea dx, primerMensaje ; Load Effective Address, cargar una direccion de mi variable Mensaje y almacenarla en dx. 
+    int 21h
+                                          
     lea bx, primerNumero ;mov al, 01h ; La interrupicion 21h requiere tener un 1 en ah para para poder admmitir un solo caracter en ASCII, 02 imprime un solo cracter, 09 un string
     call validacionNumero ;int 21h ; Es posible alojarlo en en al o ah, preferentemente al. EL RESULTADO ES GUARDADO EN AL. 
              
     call saltoLinea
-    
-    mov ah, 09h,
+      
+    mov ah, 09h
     lea dx, segundoMensaje
     int 21h
     
@@ -37,28 +42,41 @@
     call validacionNumero
     
     call saltoLinea
-    
-    xor dx, dx         
-                             
-    mov ah, 09h
+                                     
+    mov ah, 09h    
     lea dx, primerNumero
     int 21h
     
-    ;mov ah, 09h
-    ;lea dx, Resultado
-    ;int 21h           
+    mov ah, 09h
+    lea dx, Resultado
+    int 21h  
     
-    ;mov ah, 09h
-    ;lea dx, segundoNumero
-    ;int 21h
+    mov ah, 09h
+    lea dx, segundoNumero
+    int 21h                
     
+    lea bx, primerNumero
+    lea dx, primerValor
+    call convertirNumero
+    
+    lea bx, segundoNumero
+    lea dx, segundoValor
+    call convertirNumero
+             
     jmp terminarPrograma   
     
     saltoLinea proc
         
-            mov ah, 02h
-            mov dx, 0Ah ; Salto de linea en ASCII
-            int 21h                     
+        push ax
+        push dx
+           
+        mov ah, 02h
+        mov dx, 0Ah ; Salto de linea en ASCII
+        int 21h
+         
+        pop ax
+        pop dx                      
+        
         ret           
         
     saltoLinea endp             
@@ -114,6 +132,54 @@
             ret ; Retornar al punto donde se hizo la llamada
             
     validacionNumero endp
+    
+    
+    convertirNumero proc
+                            
+         push ax
+         push bx
+         push cx
+         push dx
+         push si        
+                   
+         mov cx, 0h                 
+                          
+         bucle:                        
+         
+             mov al, [si + bx]; Cargar la cadena en al               
+             cmp al, "$"
+             je convertirFinal ; Jump if Equal, brincar si es igual, en dado caso hemos asumido que la cadena se agoto.
+             cmp al, "-"
+             je omitir
+             
+             sub al, 30h ; Convertir ASCII a numero
+             add cx, ax ; Desplazar una posicion por 10, para agregar el numero pasado   
+             mov ax, 0Ah
+      
+             cmp si, 0h
+             je Omitir
+             imul cx  
+                                  
+         omitir:
+         
+            inc si
+            
+            jmp bucle:
+         
+         convertirFinal:
+         
+            mov dx, cx 
+            
+            pop si
+            pop dx
+            pop cx
+            pop bx
+            pop ax
+            
+            ret                                   
+                              
+        convertirNumero endp
+    
     
     terminarPrograma:
         
