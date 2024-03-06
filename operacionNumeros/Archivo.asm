@@ -148,16 +148,14 @@
              
              mov al, 0Ah ; Multiplicar por 10 para aumentar el numeri
              imul cx
-             mov cx,al
+             mov cx,ax
             
              xor ax, ax 
              mov al, [si + bx]; Cargar la cadena en al               
              cmp al, "$"
              je convertirFinal ; Jump if Equal, brincar si es igual, en dado caso hemos asumido que la cadena se agoto.
              cmp al, "-"
-             je omitir
-                       
-             dx          
+             je omitir          
                        
              sub al, 30h ; Convertir ASCII a numero
              add cx, ax ; Desplazar una posicion por 10, para agregar el numero pasado   
