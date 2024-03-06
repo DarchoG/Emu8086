@@ -11,8 +11,8 @@
     primerNumero db "$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
     segundoNumero db "$$$$$"
     
-    primerValor db  ?
-    segundoValor db ?
+    primerValor dw  ?
+    segundoValor dw ?
     
     Resultado db " + ", "$"                                        
     
@@ -56,11 +56,11 @@
     int 21h                
     
     lea bx, primerNumero
-    lea dx, primerValor
+    lea di, primerValor
     call convertirNumero
     
     lea bx, segundoNumero
-    lea dx, segundoValor
+    lea di, segundoValor
     call convertirNumero
              
     jmp terminarPrograma   
@@ -139,39 +139,49 @@
          push ax
          push bx
          push cx
-         push dx
+         push di
          push si        
                    
          mov cx, 0h                 
                           
          bucle:                        
-         
+             
+             mov al, 0Ah ; Multiplicar por 10 para aumentar el numeri
+             imul cx
+             mov cx,al
+            
+             xor ax, ax 
              mov al, [si + bx]; Cargar la cadena en al               
              cmp al, "$"
              je convertirFinal ; Jump if Equal, brincar si es igual, en dado caso hemos asumido que la cadena se agoto.
              cmp al, "-"
              je omitir
-             
+                       
+             dx          
+                       
              sub al, 30h ; Convertir ASCII a numero
              add cx, ax ; Desplazar una posicion por 10, para agregar el numero pasado   
-             mov ax, 0Ah
-      
-             cmp si, 0h
+             mov ax, 0Ah ; Poner 10 en ax para multiplicar  
+             
+             cmp si, 0h  ; En el primera iteracion no es necesario multiplicar por 10
              je Omitir
-             imul cx  
+             
+             imul cx
+             mov cx, ax  
                                   
          omitir:
-         
+             
+            mov cx, ax  
             inc si
             
             jmp bucle:
          
          convertirFinal:
          
-            mov dx, cx 
+            mov [di], cx 
             
             pop si
-            pop dx
+            pop di
             pop cx
             pop bx
             pop ax
