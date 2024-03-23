@@ -5,7 +5,8 @@
 .data ; Variables a usar;
      
      
-    contadorAuxiliar dw 0h 
+    contadorAuxiliar dw 0h
+    valorAuxiliar dw 0h 
     primerMensaje db "Escribe el primer numero: ", "$"
     segundoMensaje db "Escribe el segundo numero: ", "$"
     tercerMensaje db 10,"Resultado: ", "$"
@@ -141,7 +142,7 @@
          push ax ; Registro para las multiplicaciones
          push bx ; String con los numeros
          push cx ; Registro para multiplicar
-         push dx ; Variable contenedora de mi resultado
+         push dx ; Variable contenedora de mi resultado, cambiar la variable dx por temporal ya que el excedente de mul lo coloca ahi
          push si ; Registro empleado para hacer el conteo de lo ciclos
          
          call contarDigitos       
@@ -157,16 +158,18 @@
              cmp al, "-"
              je omitir
              
-             mov cx, 0Ah
+             sub al, 30h ; Convertir ASCII a numero
+             mov cx, 01h
              call obtenerPotencia
              
              mul cx ; Multiplico por mi notacion posicional
-              
-             call guardarNumero ; Resultado lo guardo en otra variable                          
+                                                                 
+             call guardarNumero ; Resultado lo guardo en otra variable
+             mov dx, valorAuxiliar                          
        
          omitir:
                
-            dec si           
+            inc si           
             jmp bucle
          
          convertirFinal:
@@ -176,6 +179,8 @@
             pop cx
             pop bx
             pop ax
+            mov bx, valorAuxiliar
+            mov valorAuxiliar, 0h
             
             ret                                   
                               
@@ -224,7 +229,7 @@
                 
         ciclo: 
                       
-           cmp si, 0
+           cmp si, 0h
            je final
                     
            mov al, 0Ah ; Multiplicar base         
@@ -245,13 +250,16 @@
          ret
         
         obtenerPotencia endp
-  
+    
+     
      guardarNumero proc ; Empleado para tener mas registros disponibles para la suma
         
         push bx
+        mov valorAuxiliar, dx
+        
         
         mov bx, ax
-        add dx, bx 
+        add valorAuxiliar, bx 
         
         pop bx
                            
