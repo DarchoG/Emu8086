@@ -3,21 +3,19 @@
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
 
 .data ; Variables a usar;
-     
-     
-    contadorAuxiliar dw 0h
-    valorAuxiliar dw 0h 
+      
     primerMensaje db "Escribe el primer numero: ", "$"
     segundoMensaje db "Escribe el segundo numero: ", "$"
-    tercerMensaje db 10,"Resultado: ", "$"
+    tercerMensaje db 10,"Resultado: + ", "$"
                                              
-    primerNumero db "$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
-    segundoNumero db "$$$$$"
+    primerNumero dw "$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
+    segundoNumero dw "$$$$$"
+        
+    resultado db " + ", "$"
+    operacion dw ? ; ? = El valor se desconoce
     
-    primerValor dw  ?
-    segundoValor dw ?
-    
-    Resultado db " + ", "$"                                        
+    contadorAuxiliar dw 0h
+    valorAuxiliar dw 0h                                        
     
     ; Los labels son direcciones susceptibles a ser usadas con el objetivo de servir como un operador de instruccion, en los casos previos serian mis saltos incondicionales
     ; Es requerido el : y un identificador.
@@ -51,7 +49,7 @@
     int 21h
     
     mov ah, 09h
-    lea dx, Resultado
+    lea dx, resultado
     int 21h  
     
     mov ah, 09h
@@ -59,12 +57,14 @@
     int 21h                
     
     lea bx, primerNumero
-    lea dx, primerValor
     call convertirNumero
+    mov primerNumero, dx
     
     lea bx, segundoNumero
-    lea dx, segundoValor
     call convertirNumero
+    mov segundoNumero, dx
+    
+    call operar
              
     jmp terminarPrograma   
     
@@ -154,7 +154,7 @@
              xor ax, ax ; Limpiar
              mov al, [bx + si]; Cargar caracteres
              cmp al, "$"
-             je convertir Final
+             je convertirFinal
              cmp al, "-"
              je omitir
              
@@ -164,8 +164,7 @@
              
              mul cx ; Multiplico por mi notacion posicional
                                                                  
-             call guardarNumero ; Resultado lo guardo en otra variable
-             mov dx, valorAuxiliar                          
+             call guardarNumero ; Resultado lo guardo en otra variable                         
        
          omitir:
                
@@ -179,8 +178,9 @@
             pop cx
             pop bx
             pop ax
-            mov bx, valorAuxiliar
+            mov dx, valorAuxiliar
             mov valorAuxiliar, 0h
+            mov contadorAuxiliar, 0h
             
             ret                                   
                               
@@ -255,8 +255,6 @@
      guardarNumero proc ; Empleado para tener mas registros disponibles para la suma
         
         push bx
-        mov valorAuxiliar, dx
-        
         
         mov bx, ax
         add valorAuxiliar, bx 
@@ -266,6 +264,53 @@
         ret                 
         
         guardarNumero endp
+     
+     operar proc
+        
+        push ax
+        push bx
+        push cx
+        push dx
+        push si
+        
+        mov ax, primerNumero
+        mov bx, segundoNumero
+        
+        add ax, bx
+        mov operacion, ax
+        
+        call divisionEuclidea   
+        
+        pop si       
+        pop dx
+        pop cx
+        pop bx
+        pop ax
+        
+        ret
+        
+        operar endp
+     
+     divisionEuclidea proc
+       
+        xor ax, ax
+        xor bx, bx
+        mov ax, operacion
+        mov bl, 0Ah
+        mov si, 0h
+        
+        division:
+      
+            div bl
+            add dx, 30h 
+            mov valorAuxiliar[si], dx
+            inc si
+            
+            cmp ax, 0
+            jne division
+       
+        divisionEuclidea endp
+     
    
     terminarPrograma:
         
