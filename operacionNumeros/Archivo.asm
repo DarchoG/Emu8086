@@ -136,42 +136,38 @@
     
     convertirNumero proc
                             
-         push ax
-         push bx
-         push cx
-         push di
-         push si        
+         push ax ; Registro para las multiplicaciones
+         push bx ; String con los numeros
+         push cx ; Registro para multiplicar
+         push di ; Variable contenedora de mi resultado
+         push si ; Registro empleado para hacer el conteo de lo ciclos       
                    
-         mov cx, 0h                 
+         mov cx, 0h ; Limpiar                
                           
-         bucle:                        
+         bucle:      
              
-             mov al, 0Ah ; Multiplicar por 10 para aumentar el numeri
-             imul cx
-             mov cx,ax
-            
-             xor ax, ax 
-             mov al, [si + bx]; Cargar la cadena en al               
+             xor ax, ax ; Limpiar
+             mov al, [bx + si]; Cargar caracteres
              cmp al, "$"
-             je convertirFinal ; Jump if Equal, brincar si es igual, en dado caso hemos asumido que la cadena se agoto.
+             je convertir Final
              cmp al, "-"
-             je omitir          
-                       
-             sub al, 30h ; Convertir ASCII a numero
-             add cx, ax ; Desplazar una posicion por 10, para agregar el numero pasado   
-             mov ax, 0Ah ; Poner 10 en ax para multiplicar  
+             je omitir
              
-             cmp si, 0h  ; En el primera iteracion no es necesario multiplicar por 10
-             je Omitir
+             mov cx, 0Ah
+             call obtenerPotencia
              
-             imul cx
-             mov cx, ax  
-                                  
+             mul cx ; Multiplico por mi notacion posicional
+             ;mov ax, ; Resultado lo guardo en otra variable
+              
+             ;call guardarNumero
+             
+                             
+       
          omitir:
              
             mov cx, ax  
             inc si
-            
+                        
             jmp bucle:
          
          convertirFinal:
@@ -187,11 +183,42 @@
             ret                                   
                               
         convertirNumero endp
+        
     
+    obtenerPotencia proc  ; Obtener la notacion posicional para obtener mi valor, retornar dicho valor, potencias de 10.
+        
+        push ax
+        push si
+        
+        ; ax Tiene mi valor ingresado a obtener la potencia             
+        ; cx Tiene 10
+                
+        ciclo: 
+                      
+           cmp si, 0
+           je final
+                    
+           mov al, 0Ah ; Multiplicar base         
+           mul cx ; Multiplico por mi base
+           mov cx, ax ; Actualizo mi resultado
+             
+           dec si
+           
+           jmp ciclo
+    
+        final:
+               
+         pop ax      
+         pop si
+        
+         ret
+        
+        obtenerPotencia endp  
     
     terminarPrograma:
         
         mov ah, 04ch
-        int 21h
+        int 21h      
+                
     
 end code
