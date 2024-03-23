@@ -3,11 +3,13 @@
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
 
 .data ; Variables a usar;
-    
+     
+     
+    contadorAuxiliar dw 0h 
     primerMensaje db "Escribe el primer numero: ", "$"
     segundoMensaje db "Escribe el segundo numero: ", "$"
-    tercerMensaje db 10, "Resultado: " 
-                                            
+    tercerMensaje db 10,"Resultado: ", "$"
+                                             
     primerNumero db "$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
     segundoNumero db "$$$$$"
     
@@ -56,11 +58,11 @@
     int 21h                
     
     lea bx, primerNumero
-    lea di, primerValor
+    lea dx, primerValor
     call convertirNumero
     
     lea bx, segundoNumero
-    lea di, segundoValor
+    lea dx, segundoValor
     call convertirNumero
              
     jmp terminarPrograma   
@@ -139,8 +141,10 @@
          push ax ; Registro para las multiplicaciones
          push bx ; String con los numeros
          push cx ; Registro para multiplicar
-         push di ; Variable contenedora de mi resultado
-         push si ; Registro empleado para hacer el conteo de lo ciclos       
+         push dx ; Variable contenedora de mi resultado
+         push si ; Registro empleado para hacer el conteo de lo ciclos
+         
+         call contarDigitos       
                    
          mov cx, 0h ; Limpiar                
                           
@@ -157,25 +161,18 @@
              call obtenerPotencia
              
              mul cx ; Multiplico por mi notacion posicional
-             ;mov ax, ; Resultado lo guardo en otra variable
               
-             ;call guardarNumero
-             
-                             
+             call guardarNumero ; Resultado lo guardo en otra variable                          
        
          omitir:
-             
-            mov cx, ax  
-            inc si
-                        
-            jmp bucle:
+               
+            dec si           
+            jmp bucle
          
          convertirFinal:
-         
-            mov [di], cx 
-            
+                     
             pop si
-            pop di
+            pop dx
             pop cx
             pop bx
             pop ax
@@ -183,12 +180,44 @@
             ret                                   
                               
         convertirNumero endp
+    
+    contarDigitos proc  ; Necesito contar los digitos para saber en que posicion estoy en mi bucle porque al iterar el string lo hago en posicion 0, pero realmente es el bit mas significativo.
+             
+             push bx
+             push si
+             
+             inicio:
+             
+             mov al, [bx + si]; Cargar caracteres
+             cmp al, "$"
+             je objetivo
+             cmp al, "-"
+             je saltar
+               
+             saltar:
+             
+                inc si
+                jmp inicio     
+             
+             objetivo:
+             
+               dec si   
+               mov contadorAuxiliar, si ; Saber la cantidad de posiciones que tiene mi cantidad para poderlo convertir satisfactoriamente
+               
+               pop si
+               pop bx                          
+          
+               ret 
+                          
+        contarDigitos endp
         
     
     obtenerPotencia proc  ; Obtener la notacion posicional para obtener mi valor, retornar dicho valor, potencias de 10.
         
         push ax
         push si
+        
+        mov si, contadorAuxiliar ; Cargar la ultima posicion.
         
         ; ax Tiene mi valor ingresado a obtener la potencia             
         ; cx Tiene 10
@@ -208,17 +237,31 @@
     
         final:
                
-         pop ax      
-         pop si
+         pop si      
+         pop ax
+         
+         sub contadorAuxiliar, 01h
         
          ret
         
-        obtenerPotencia endp  
-    
+        obtenerPotencia endp
+  
+     guardarNumero proc ; Empleado para tener mas registros disponibles para la suma
+        
+        push bx
+        
+        mov bx, ax
+        add dx, bx 
+        
+        pop bx
+                           
+        ret                 
+        
+        guardarNumero endp
+   
     terminarPrograma:
         
         mov ah, 04ch
         int 21h      
                 
-    
 end code
