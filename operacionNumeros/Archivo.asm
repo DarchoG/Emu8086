@@ -292,8 +292,10 @@
         operar endp
      
      divisionEuclidea proc
-       
+        
+        xor ax, ax
         xor bx, bx
+        xor dx, dx
         mov ax, operacion
         mov bx, 0Ah
         mov si, 0h
@@ -302,7 +304,7 @@
       
             div bx
             add dx, 30h 
-            mov valorAuxiliar[si], dx
+            mov [valorAuxiliar + si], dx
             inc si
             
             cmp ax, 0
