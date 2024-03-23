@@ -293,15 +293,14 @@
      
      divisionEuclidea proc
        
-        xor ax, ax
         xor bx, bx
         mov ax, operacion
-        mov bl, 0Ah
+        mov bx, 0Ah
         mov si, 0h
         
         division:
       
-            div bl
+            div bx
             add dx, 30h 
             mov valorAuxiliar[si], dx
             inc si
