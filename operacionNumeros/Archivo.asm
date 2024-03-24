@@ -15,7 +15,7 @@
     operacion dw ? ; ? = El valor se desconoce
     
     contadorAuxiliar dw 0h
-    valorAuxiliar dw 0h                                        
+    valorAuxiliar dw 0h                                     
     
     ; Los labels son direcciones susceptibles a ser usadas con el objetivo de servir como un operador de instruccion, en los casos previos serian mis saltos incondicionales
     ; Es requerido el : y un identificador.
@@ -301,7 +301,8 @@
         mov si, 0h
         
         division:
-      
+                 
+            xor dx, dx     
             div bx
             add dx, 30h 
             mov [valorAuxiliar + si], dx
@@ -309,9 +310,45 @@
             
             cmp ax, 0
             jne division
+                                     
+            call invertir
+            
+            ret
        
         divisionEuclidea endp
-     
+       
+    
+      invertir proc
+        
+        push ax
+        push bx            
+        push cx 
+        push dx 
+        lea bx, valorAuxiliar 
+        lea dx, primerNumero
+        mov cx, si   
+        mov di, cx
+        mov si, 0h
+        dec di
+      
+        proceso:  
+             
+           mov al, valorAuxiliar[si]    
+           mov primerNumero[di], al
+           inc si
+           dec di
+           
+           cmp cx, 0
+           loop proceso       
+         
+         pop dx                 
+         pop cx
+         pop bx
+         pop ax
+            
+         ret
+        
+        invertir endp  
    
     terminarPrograma:
         
