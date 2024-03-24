@@ -1,3 +1,4 @@
+
 .model small  ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
               ; Small soporta un segmento de datos y codigo
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
@@ -7,6 +8,7 @@
     primerMensaje db "Escribe el primer numero: ", "$"
     segundoMensaje db "Escribe el segundo numero: ", "$"
     tercerMensaje db 10,"Resultado: + ", "$"
+    cuartoMensaje db " = ", "$"
                                              
     primerNumero dw "$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
     segundoNumero dw "$$$$$"
@@ -54,6 +56,10 @@
     
     mov ah, 09h
     lea dx, segundoNumero
+    int 21h
+    
+    mov ah, 09h
+    lea dx, cuartoMensaje
     int 21h                
     
     lea bx, primerNumero
@@ -65,7 +71,11 @@
     mov segundoNumero, dx
     
     call operar
-             
+                               
+    mov ah, 09h
+    lea dx, operacion
+    int 21h
+              
     jmp terminarPrograma   
     
     saltoLinea proc
@@ -215,7 +225,7 @@
                ret 
                           
         contarDigitos endp
-        
+
     
     obtenerPotencia proc  ; Obtener la notacion posicional para obtener mi valor, retornar dicho valor, potencias de 10.
         
@@ -264,7 +274,8 @@
         ret                 
         
         guardarNumero endp
-     
+        
+        
      operar proc
         
         push ax
@@ -290,7 +301,8 @@
         ret
         
         operar endp
-     
+        
+        
      divisionEuclidea proc
         
         xor ax, ax
@@ -319,37 +331,35 @@
        
     
       invertir proc
-        
-        push ax
-        push bx            
-        push cx 
-        push dx 
-        lea bx, valorAuxiliar 
-        lea dx, primerNumero
-        mov cx, si   
-        mov di, cx
-        mov si, 0h
-        dec di
+                   
+        push si ; Contiene la dimension de mi string
+        push di
+
+        dec si ; Contiene la dimension de mi string
+        mov di, 0h
       
         proceso:  
-             
-           mov al, valorAuxiliar[si]    
-           mov primerNumero[di], al
-           inc si
-           dec di
+                
+           mov ax, valorAuxiliar[si]     
+           mov [operacion + di], ax    
            
-           cmp cx, 0
-           loop proceso       
+           dec si
+           inc di
+           
+           cmp si, 0h
+           jne proceso
+           
+         inc di
+         mov operacion[di], "$"         
          
-         pop dx                 
-         pop cx
-         pop bx
-         pop ax
-            
+         pop di
+         pop si
+                     
          ret
         
         invertir endp  
-   
+         
+         
     terminarPrograma:
         
         mov ah, 04ch
