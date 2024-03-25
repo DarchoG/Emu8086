@@ -1,4 +1,3 @@
-
 .model small  ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
               ; Small soporta un segmento de datos y codigo
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
@@ -331,29 +330,32 @@
        
     
       invertir proc
-                   
+        
+        push bx ; Usar Bx para compararlo con -1, los sstrings incian con memoria 0.           
         push si ; Contiene la dimension de mi string
         push di
-
+        
+        mov bx, 0h
+        dec bx ; Contener -1
         dec si ; Contiene la dimension de mi string
         mov di, 0h
       
         proceso:  
-                
+                           
            mov ax, valorAuxiliar[si]     
            mov [operacion + di], ax    
            
            dec si
            inc di
            
-           cmp si, 0h
+           cmp si, bx
            jne proceso
            
-         inc di
          mov operacion[di], "$"         
          
          pop di
          pop si
+         pop bx
                      
          ret
         
