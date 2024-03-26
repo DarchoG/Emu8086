@@ -8,7 +8,7 @@
 
 **4°.** En caso de excederse los 320x200 pixeles (300 horizontales) se restablece la pantalla.
 
-**5°.** Si es detecta algún input del teclado el programa finaliza.
+**5°.** Si se detecta algún input del teclado el programa finaliza.
 
 **Interrupciones**
 
@@ -25,6 +25,6 @@
 **jnz:** Jump if Not Zero, brinca si no es 0, comprueba el valor de la bandera ZF (Zero Flag).
 **13:** En ASCII permite retornar el cursor al inicio, usado para imprimir el primer mensaje.
 
-La función graficada corresponde a la senoidal obtenida por la subsecuente formula Y=100+100*SENO(2*PI()*(B2/C2)*A2), donde B2 = 200 y C2 = 10,000, retorna valores que oscilan entre 0 y 200. 
+La función graficada corresponde a la senoidal obtenida por la subsecuente fórmula Y=100+100*SENO(2*PI()*(B2/C2)*A2), donde B2 = 200 y C2 = 10,000, retorna valores que oscilan entre 0 y 200. 
 
-No obstante los pixeles son contados de la parte superior izquierda, por lo tanto es necesario en primera instancia calcular el **complemento a 200**, es decir la cantidad faltante para llegar a 200, el cual es límite de pantalla, obteniendo de tal manera mi **límite superior** y el **límite inferior** siendo conformados por los valores estándar retornados respecto a mi **eje central 100** por tener 200 pixeles verticales, el array datosSenoidal dispone los primeros 25 elementos de ambos límites (Disponibles en el Excel).
+No obstante los pixeles son contados de la parte superior izquierda, por lo tanto es necesario en primera instancia calcular el **complemento a 200**, es decir la cantidad faltante para llegar a 200, el cual es límite de pantalla, obteniendo de tal manera mi **límite superior** y el **límite inferior** siendo conformados por los valores estándar retornados respecto a mi **eje central 100** por tener 200 píxeles verticales, el array datosSenoidal dispone los primeros 25 elementos de ambos límites (Disponibles en el Excel).
