@@ -13,8 +13,11 @@
 **Interrupciones**
 
 **Int 10h:** Permite el modo video, en **al** se aloja las propiedades del mismo, al 13h brinda de una pantalla de 320x200 pixeles.
+
 **Int 10h (0ch ah, Color al):** Emplea los registros CX y DX como ejes X y Y respectivamente a fin de imprimir un píxel del color alojado como valor numérico en AL.
+
 **Int 10h (06h ah):** Restablece la pantalla.
+
 **Int 16h (01 ah):** Solicita la lectura del teclado sin espera (Usada para romper el bucle).
 
 **Funciones**
