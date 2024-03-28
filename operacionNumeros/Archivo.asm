@@ -9,8 +9,8 @@
     tercerMensaje db 10,"Resultado: + ", "$"
     cuartoMensaje db " = ", "$"
                                              
-    primerNumero dw "$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
-    segundoNumero dw "$$$$$"
+    primerNumero dw "$$$$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
+    segundoNumero dw "$$$$$$$$$"
         
     resultado db " + ", "$"
     operacion dw ? ; ? = El valor se desconoce
@@ -154,27 +154,31 @@
          push cx ; Registro para multiplicar
          push dx ; Variable contenedora de mi resultado, cambiar la variable dx por temporal ya que el excedente de mul lo coloca ahi
          push si ; Registro empleado para hacer el conteo de lo ciclos
-         
-         call contarDigitos       
-                   
-         mov cx, 0h ; Limpiar                
-                          
-         bucle:      
-             
-             xor ax, ax ; Limpiar
-             mov al, [bx + si]; Cargar caracteres
-             cmp al, "$"
+                                      
+         bucle:
+                           
+             mov cl, [bx + si]; Cargar caracteres
+             cmp cl, "$"
              je convertirFinal
-             cmp al, "-"
+             cmp cl, "-"
              je negativo
+                  
+             mov ax, 0Ah
+             mov cx, valorAuxiliar
+             mul cx
              
-             sub al, 30h ; Convertir ASCII a numero
-             mov cx, 01h
-             call obtenerPotencia
+             mov cx, ax
+             mov valorAuxiliar, cx
+             xor cx, cx
+             mov cl, [bx + si]
+               
+             mov valorAuxiliar, ax
              
-             mul cx ; Multiplico por mi notacion posicional
-                                                                 
-             call guardarNumero ; Resultado lo guardo en otra variable
+             sub cl, 30h ; Convertir ASCII a numero
+             mul cl
+             
+             add valorAuxiliar, cx
+                                                               
              inc si
              jmp bucle                          
            
@@ -208,88 +212,7 @@
             
                                   
         convertirNumero endp
-    
-    
-    contarDigitos proc  ; Necesito contar los digitos para saber en que posicion estoy en mi bucle porque al iterar el string lo hago en posicion 0, pero realmente es el bit mas significativo.
              
-             push bx
-             push si
-             
-             inicio:
-             
-             mov al, [bx + si]; Cargar caracteres
-             cmp al, "$"
-             je objetivo
-             cmp al, "-"
-             je saltar
-               
-             saltar:
-             
-                inc si
-                jmp inicio     
-             
-             objetivo:
-             
-               dec si   
-               mov contadorAuxiliar, si ; Saber la cantidad de posiciones que tiene mi cantidad para poderlo convertir satisfactoriamente
-               
-               pop si
-               pop bx                          
-          
-               ret 
-                          
-        contarDigitos endp
-
-    
-    obtenerPotencia proc  ; Obtener la notacion posicional para obtener mi valor, retornar dicho valor, potencias de 10.
-        
-        push ax
-        push si
-        
-        mov si, contadorAuxiliar ; Cargar la ultima posicion.
-        
-        ; ax Tiene mi valor ingresado a obtener la potencia             
-        ; cx Tiene 10
-                
-        ciclo: 
-                      
-           cmp si, 0h
-           je final
-                    
-           mov al, 0Ah ; Multiplicar base         
-           mul cx ; Multiplico por mi base
-           mov cx, ax ; Actualizo mi resultado
-             
-           dec si
-           
-           jmp ciclo
-    
-        final:
-               
-         pop si      
-         pop ax
-         
-         sub contadorAuxiliar, 01h
-        
-         ret
-        
-        obtenerPotencia endp
-    
-     
-     guardarNumero proc ; Empleado para tener mas registros disponibles para la suma
-        
-        push bx
-        
-        mov bx, ax
-        add valorAuxiliar, bx 
-        
-        pop bx
-                           
-        ret                 
-        
-        guardarNumero endp
-        
-        
      operar proc
         
         push ax
@@ -308,6 +231,7 @@
         jns positivo
         
         neg operacion
+        mov bandera, 01h
             
         positivo:
         
@@ -343,6 +267,14 @@
             
             cmp ax, 0
             jne division
+            
+            cmp bandera, 01h
+            jne sinSigno
+            
+            inc si
+            mov [valorAuxiliar + si], "-"
+              
+            sinSigno:
                                      
             call invertir
             
