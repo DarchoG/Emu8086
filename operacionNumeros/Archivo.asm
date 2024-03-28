@@ -16,7 +16,8 @@
     operacion dw ? ; ? = El valor se desconoce
     
     contadorAuxiliar dw 0h
-    valorAuxiliar dw 0h                                     
+    valorAuxiliar dw 0h
+    bandera dw 0h                                     
     
     ; Los labels son direcciones susceptibles a ser usadas con el objetivo de servir como un operador de instruccion, en los casos previos serian mis saltos incondicionales
     ; Es requerido el : y un identificador.
@@ -165,7 +166,7 @@
              cmp al, "$"
              je convertirFinal
              cmp al, "-"
-             je omitir
+             je negativo
              
              sub al, 30h ; Convertir ASCII a numero
              mov cx, 01h
@@ -173,13 +174,10 @@
              
              mul cx ; Multiplico por mi notacion posicional
                                                                  
-             call guardarNumero ; Resultado lo guardo en otra variable                         
-       
-         omitir:
-               
-            inc si           
-            jmp bucle
-         
+             call guardarNumero ; Resultado lo guardo en otra variable
+             inc si
+             jmp bucle                          
+           
          convertirFinal:
                      
             pop si
@@ -191,9 +189,26 @@
             mov valorAuxiliar, 0h
             mov contadorAuxiliar, 0h
             
-            ret                                   
-                              
+            cmp bandera, 01h
+            je negar
+            
+            ret
+            
+            negar:
+            
+                neg dx
+                mov bandera, 0h
+                ret
+            
+          negativo:
+          
+            mov bandera, 01h
+            inc si
+            jmp bucle  
+            
+                                  
         convertirNumero endp
+    
     
     contarDigitos proc  ; Necesito contar los digitos para saber en que posicion estoy en mi bucle porque al iterar el string lo hago en posicion 0, pero realmente es el bit mas significativo.
              
@@ -288,6 +303,13 @@
         
         add ax, bx
         mov operacion, ax
+        
+        cmp operacion, 0h
+        jns positivo
+        
+        neg operacion
+            
+        positivo:
         
         call divisionEuclidea   
         
