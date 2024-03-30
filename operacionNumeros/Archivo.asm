@@ -1,3 +1,4 @@
+
 .model small  ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
               ; Small soporta un segmento de datos y codigo
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
@@ -5,16 +6,20 @@
 .data ; Variables a usar;
       
     primerMensaje db "Escribe el primer numero: ", "$"
-    segundoMensaje db "Escribe el segundo numero: ", "$"
-    tercerMensaje db 10,"Resultado: + ", "$"
-    cuartoMensaje db " = ", "$"
+    segundoMensaje db 13, "Escribe el segundo numero: ", "$"
+    tercerMensaje db 10,13, "Resultado: ", "$"
+    cuartoMensaje db " + ", "$"
+    quintoMensaje db " = ", "$"
                                              
-    primerNumero dw "$$$$$$$$$" ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
-    segundoNumero dw "$$$$$$$$$"
-        
-    resultado db " + ", "$"
-    operacion dw ? ; ? = El valor se desconoce
+    primerNumero dw ? ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
+    segundoNumero dw ?
+    operacion dw ? 
     
+    primerNumeroString db "$$$$$$$$$"
+    segundoNumeroString db "$$$$$$$$$"
+    valorAuxiliarString db "$$$$$$$$$"
+    resultado db "$$$$$$$$$"
+         
     contadorAuxiliar dw 0h
     valorAuxiliar dw 0h
     bandera dw 0h                                     
@@ -32,7 +37,7 @@
     lea dx, primerMensaje ; Load Effective Address, cargar una direccion de mi variable Mensaje y almacenarla en dx. 
     int 21h
                                           
-    lea bx, primerNumero ;mov al, 01h ; La interrupicion 21h requiere tener un 1 en ah para para poder admmitir un solo caracter en ASCII, 02 imprime un solo cracter, 09 un string
+    lea bx, primerNumeroString ;mov al, 01h ; La interrupicion 21h requiere tener un 1 en ah para para poder admmitir un solo caracter en ASCII, 02 imprime un solo cracter, 09 un string
     call validacionNumero ;int 21h ; Es posible alojarlo en en al o ah, preferentemente al. EL RESULTADO ES GUARDADO EN AL. 
              
     call saltoLinea
@@ -41,39 +46,43 @@
     lea dx, segundoMensaje
     int 21h
     
-    lea bx, segundoNumero
+    lea bx, segundoNumeroString
     call validacionNumero
     
     call saltoLinea
+         
+    mov ah, 09h
+    lea dx, tercerMensaje
+    int 21h  
                                      
     mov ah, 09h    
-    lea dx, primerNumero
-    int 21h
-    
-    mov ah, 09h
-    lea dx, resultado
-    int 21h  
-    
-    mov ah, 09h
-    lea dx, segundoNumero
-    int 21h
+    lea dx, primerNumeroString
+    int 21h 
     
     mov ah, 09h
     lea dx, cuartoMensaje
+    int 21h
+    
+    mov ah, 09h
+    lea dx, segundoNumeroString
+    int 21h
+    
+    mov ah, 09h
+    lea dx, quintoMensaje
     int 21h                
     
-    lea bx, primerNumero
+    lea bx, primerNumeroString
     call convertirNumero
     mov primerNumero, dx
     
-    lea bx, segundoNumero
+    lea bx, segundoNumeroString
     call convertirNumero
     mov segundoNumero, dx
     
     call operar
                                
     mov ah, 09h
-    lea dx, operacion
+    lea dx, Resultado
     int 21h
               
     jmp terminarPrograma   
@@ -262,7 +271,7 @@
             xor dx, dx     
             div bx
             add dx, 30h 
-            mov [valorAuxiliar + si], dx
+            mov [valorAuxiliarString + si], dl
             inc si
             
             cmp ax, 0
@@ -271,8 +280,7 @@
             cmp bandera, 01h
             jne sinSigno
             
-            inc si
-            mov [valorAuxiliar + si], "-"
+            mov [valorAuxiliarString + si], "-"
               
             sinSigno:
                                      
@@ -293,11 +301,16 @@
         dec bx ; Contener -1
         dec si ; Contiene la dimension de mi string
         mov di, 0h
-      
+        
+        cmp bandera, 01h
+        jne proceso
+        
+        inc si
+              
         proceso:  
                            
-           mov ax, valorAuxiliar[si]     
-           mov [operacion + di], ax    
+           mov al, valorAuxiliarString[si]     
+           mov [Resultado + di], al    
            
            dec si
            inc di
@@ -305,7 +318,7 @@
            cmp si, bx
            jne proceso
            
-         mov operacion[di], "$"         
+         mov Resultado[di], "$"         
          
          pop di
          pop si
