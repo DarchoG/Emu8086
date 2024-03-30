@@ -1,5 +1,5 @@
-.model small  ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
-              ; Small soporta un segmento de datos y codigo
+.model small
+              
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
 
 .data ; Variables a usar;
@@ -280,6 +280,7 @@
             jne sinSigno
             
             mov [valorAuxiliarString + si], "-"
+            inc si
               
             sinSigno:
                                      
@@ -292,7 +293,7 @@
     
       invertir proc
         
-        push bx ; Usar Bx para compararlo con -1, los sstrings incian con memoria 0.           
+        push bx ; Usar Bx para compararlo con -1, los strings incian con memoria 0.           
         push si ; Contiene la dimension de mi string
         push di
         
@@ -300,11 +301,6 @@
         dec bx ; Contener -1
         dec si ; Contiene la dimension de mi string
         mov di, 0h
-        
-        cmp bandera, 01h
-        jne proceso
-        
-        inc si
               
         proceso:  
                            
