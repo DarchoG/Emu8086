@@ -174,14 +174,11 @@
              mov ax, 0Ah
              mov cx, valorAuxiliar
              mul cx
-             
-             mov cx, ax
-             mov valorAuxiliar, cx
+            
+             mov valorAuxiliar, ax
              xor cx, cx
              mov cl, [bx + si]
-               
-             mov valorAuxiliar, ax
-             
+                    
              sub cl, 30h ; Convertir ASCII a numero
              mul cl
              
