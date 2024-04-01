@@ -285,13 +285,10 @@
        
     
       invertir proc
-        
-        push bx ; Usar Bx para compararlo con -1, los strings incian con memoria 0.           
+                 
         push si ; Contiene la dimension de mi string
         push di
         
-        mov bx, 0h
-        dec bx ; Contener -1
         dec si ; Contiene la dimension de mi string
         mov di, 0h
               
@@ -303,14 +300,13 @@
            dec si
            inc di
            
-           cmp si, bx
+           cmp si, -1h
            jne proceso
            
          mov Resultado[di], "$"         
          
          pop di
          pop si
-         pop bx
                      
          ret
         
