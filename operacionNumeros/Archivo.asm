@@ -180,8 +180,6 @@
              mov cl, [bx + si]
                     
              sub cl, 30h ; Convertir ASCII a numero
-             mul cl
-             
              add valorAuxiliar, cx
                                                                
              inc si
