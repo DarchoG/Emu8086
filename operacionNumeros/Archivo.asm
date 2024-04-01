@@ -183,8 +183,14 @@
              add valorAuxiliar, cx
                                                                
              inc si
-             jmp bucle                          
-           
+             jmp bucle
+             
+             negativo:
+          
+                mov bandera, 01h
+                inc si
+                jmp bucle  
+                     
          convertirFinal:
                      
             pop si
@@ -205,14 +211,7 @@
                 neg dx
                 mov bandera, 0h
                 ret
-            
-          negativo:
-          
-            mov bandera, 01h
-            inc si
-            jmp bucle  
-            
-                                  
+                                     
         convertirNumero endp
              
      operar proc
