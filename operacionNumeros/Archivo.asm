@@ -260,11 +260,11 @@
         mov si, 0h
         
         division:
-                 
-            xor dx, dx     
+                     
             div bx
             add dx, 30h 
             mov [valorAuxiliarString + si], dl
+            xor dx, dx 
             inc si
             
             cmp ax, 0
