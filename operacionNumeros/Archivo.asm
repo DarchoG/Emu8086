@@ -1,4 +1,4 @@
-                                            .model small ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
+.model small ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
              ; Small soporta un segmento de datos y codigo
               
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
