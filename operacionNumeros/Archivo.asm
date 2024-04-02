@@ -1,4 +1,4 @@
-.model small ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
+                                            .model small ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
              ; Small soporta un segmento de datos y codigo
               
 .stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
@@ -38,6 +38,10 @@
                                           
     lea bx, primerNumeroString ;mov al, 01h ; La interrupicion 21h requiere tener un 1 en ah para para poder admmitir un solo caracter en ASCII, 02 imprime un solo cracter, 09 un string
     call validacionNumero ;int 21h ; Es posible alojarlo en en al o ah, preferentemente al. EL RESULTADO ES GUARDADO EN AL. 
+    
+    lea bx, primerNumeroString
+    call convertirNumero
+    mov primerNumero, dx
              
     call saltoLinea
       
@@ -47,6 +51,10 @@
     
     lea bx, segundoNumeroString
     call validacionNumero
+    
+    lea bx, segundoNumeroString
+    call convertirNumero
+    mov segundoNumero, dx
     
     call saltoLinea
          
@@ -70,21 +78,14 @@
     lea dx, quintoMensaje
     int 21h                
     
-    lea bx, primerNumeroString
-    call convertirNumero
-    mov primerNumero, dx
-    
-    lea bx, segundoNumeroString
-    call convertirNumero
-    mov segundoNumero, dx
-    
     call operar
                                
     mov ah, 09h
     lea dx, Resultado
     int 21h
               
-    jmp terminarPrograma   
+    mov ah, 04ch
+    int 21h    
     
     saltoLinea proc
         
@@ -311,11 +312,5 @@
          ret
         
         invertir endp  
-         
-         
-    terminarPrograma:
-        
-        mov ah, 04ch
-        int 21h      
-                
+
 end code
