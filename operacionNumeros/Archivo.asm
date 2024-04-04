@@ -1,43 +1,46 @@
-.model small ; Que tan grande quiero que sea el programa, termino medio es posible usar tiny, small, medium, compact, large
-             ; Small soporta un segmento de datos y codigo
-              
-.stack 100h   ; Datos de pila 256 datos, 100h en hexadecimal, es una buena practica declarar el modulo de datos y memoria a hacer uso antes del codigo
+.model small ; tiny, small, medium, compact, large
+                       
+.stack 100h ; Datos de pila 
 
-.data ; Variables a usar;
+.data ; Segmento Variables 
+
+    ; Mensajes de control a emitir
       
     primerMensaje db "Escribe el primer numero: ", "$"
     segundoMensaje db 13, "Escribe el segundo numero: ", "$"
     tercerMensaje db 10,13, "Resultado: ", "$"
     cuartoMensaje db " + ", "$"
     quintoMensaje db " = ", "$"
+    
+    ; Variables numericas contenedoras de mis resultados 
                                              
-    primerNumero dw ? ; El mensaje actualmente se desconoce, por tal motivo signo de interogacion
+    primerNumero dw ?
     segundoNumero dw ?
-    operacion dw ? 
+    operacion dw ?
+    
+    ; Variables contenedoras de caracteres.
     
     primerNumeroString db "$$$$$$$$$"
     segundoNumeroString db "$$$$$$$$$"
     valorAuxiliarString db "$$$$$$$$$"
     resultado db "$$$$$$$$$"
+    
+    ; Variables auxiliares
          
     valorAuxiliar dw 0h
     bandera dw 0h                                     
     
-    ; Los labels son direcciones susceptibles a ser usadas con el objetivo de servir como un operador de instruccion, en los casos previos serian mis saltos incondicionales
-    ; Es requerido el : y un identificador.
-    ; CMP simula los if, es un salto condicional.    
+.code
 
-.code ; Operaciones logicas matematicas a realizar;
-
-    mov ax, @data ; Todas mis variables las muevo a la parte alta de mi regitstro, para posteriormente cargarlo en DS
-    mov ds, ax ; No se pueden usar las variables directamente a mis registros de segmentos, DS (Data Segment)
+    mov ax, @data 
+    mov ds, ax 
                    
-    mov ah, 09h ; Imprimir un string con 09, cargarlo en mi segmentos de datos con mi operador lea
-    lea dx, primerMensaje ; Load Effective Address, cargar una direccion de mi variable Mensaje y almacenarla en dx. 
+    mov ah, 09h ; Imprimir un string con 09, cargarlo en DX con LEA
+    lea dx, primerMensaje
     int 21h
                                           
-    lea bx, primerNumeroString ;mov al, 01h ; La interrupicion 21h requiere tener un 1 en ah para para poder admmitir un solo caracter en ASCII, 02 imprime un solo cracter, 09 un string
-    call validacionNumero ;int 21h ; Es posible alojarlo en en al o ah, preferentemente al. EL RESULTADO ES GUARDADO EN AL. 
+    lea bx, primerNumeroString 
+    call validacionNumero  
     
     lea bx, primerNumeroString
     call convertirNumero
@@ -104,7 +107,7 @@
     saltoLinea endp             
     
     
-    validacionNumero proc;Creacion de una funcion para poder validar n cantidad de numeros y evitar repetir codigo
+    validacionNumero proc
     
         push ax
         push bx
@@ -116,29 +119,29 @@
         
         leerSiguienteCaracter:
         
-        mov ah, 01h ; Ejecutar la funcion 01h de la interrupcion 21h que permite leer un solo caracter, almacenado en al
+        mov ah, 01h ; Ejecutar la funcion 01h de la interrupcion 21h que permite leer un solo caracter, almacenado en al.
         int 21h
                   
         ; Proceso de validacion del numero          
                   
-        cmp al, "-" ; cmp es equivalente a un if
-            jne procesarDigito; Jump if Not Equal, salto condicional, se produce si la comparacion anterior es falsa
+        cmp al, "-" 
+            jne procesarDigito; Jump if Not Equal, salto condicional, se produce si la comparacion anterior es falsa.
         cmp si, 0h
             jne terminarLectura
         
-        mov [bx + si], al ; Alojar el dato digitado
-        inc si ; Incrementar 1 para comparar la siguiente posicion del string 
+        mov [bx + si], al ; Alojar el dato digitado.
+        inc si ; Incrementar 1 para comparar la siguiente posicion del string. 
         
         jmp leerSiguienteCaracter
         
         procesarDigito:
             
             cmp al, "0"
-                jl terminarLectura ; Jump if Less Than, si es menor que 0 terminar lectura
+                jl terminarLectura ; Jump if Less Than, si es menor que 0 terminar lectura.
             cmp al, "9"
-                jg terminarLectura ; Jump if Greater than, si es mayor que 9 terminar lectura
+                jg terminarLectura ; Jump if Greater than, si es mayor que 9 terminar lectura.
             
-            mov [bx + si], al ; Recorrer una posicion de la lectura del string
+            mov [bx + si], al ; Recorrer una posicion de la lectura del string.
             inc si
             jmp leerSiguienteCaracter
         
@@ -151,22 +154,22 @@
             pop bx
             pop ax
             
-            ret ; Retornar al punto donde se hizo la llamada
+            ret ; Retornar al punto donde se hizo la llamada.
             
     validacionNumero endp
     
     
     convertirNumero proc
                             
-         push ax ; Registro para las multiplicaciones
-         push bx ; String con los numeros
-         push cx ; Registro para multiplicar
+         push ax ; Registro para las multiplicaciones.
+         push bx ; String con los numeros.
+         push cx ; Registro para multiplicar.
          push dx ; Variable contenedora de mi resultado, cambiar la variable dx por temporal ya que el excedente de mul lo coloca ahi
-         push si ; Registro empleado para hacer el conteo de lo ciclos
+         push si ; Registro empleado para hacer el conteo de lo ciclos.                                                               .
                                       
          bucle:
                            
-             mov cl, [bx + si]; Cargar caracteres
+             mov cl, [bx + si]; Cargar caracteres.
              cmp cl, "$"
              je convertirFinal
              cmp cl, "-"
@@ -180,7 +183,7 @@
              xor cx, cx
              mov cl, [bx + si]
                     
-             sub cl, 30h ; Convertir ASCII a numero
+             sub cl, 30h ; Convertir ASCII a numero.
              add valorAuxiliar, cx
                                                                
              inc si
@@ -290,7 +293,7 @@
         push si ; Contiene la dimension de mi string
         push di
         
-        dec si ; Contiene la dimension de mi string
+        dec si
         mov di, 0h
               
         proceso:  
