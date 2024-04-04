@@ -6,11 +6,7 @@
 
 **3°-** Convierte los números ASCII a valores numéricos y los almacena en las mismas variables primer y segundo número.
    
-**3.1°-** Obtiene la longitud de la cadena a leer, a fin de determinar la notación posicional correspondiente a cada dato, es decir su unidad, decena, centena, millar etc.
-   
-**3.2°-** Coloca en cx el 1 en hexadecimal y lo multiplica en un loop n veces correspondiente a su notación posicional, brindada por la variable contadorAuxiliar, obtenida en el punto anterior.
-   
-**3.3°-** El valor resultante lo almacena en valorAuxiliar y los suma hasta terminar de recorrer todo el array. (Repite el proceso con el otro número)
+**3.1°-** Aloja en memoria el carácter más significativo en cada iteración, lo multiplica por 10 y es sumado el siguiente valor.
    
 **4°-** Carga en registros ambos números los suma y el resultado es colocado en la variable operacion.
 
