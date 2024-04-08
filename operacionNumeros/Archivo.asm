@@ -99,8 +99,8 @@
         mov dx, 0Ah ; Salto de linea en ASCII
         int 21h
          
-        pop ax
-        pop dx                      
+        pop dx
+        pop ax                      
         
         ret           
         
