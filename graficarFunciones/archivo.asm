@@ -1,3 +1,4 @@
+
 .model small
 
 .stack 100h
@@ -25,8 +26,8 @@
     ; Valores  
      
     funcionLineal db 200, 197, 195, 192, 190, 187, 185, 182, 180, 177, 175, 172, 170, 167, 165, 162, 160, 157, 155, 152, 150, 147, 145, 142, 140, 137, 135, 132, 130, 127, 125, 122, 120, 117, 115, 112, 110, 107, 105, 102, 100, 97, 95, 92, 90, 87, 85, 82, 80, 77, 75, 72, 70, 67, 65, 62, 60, 57, 55, 52, 50, 47, 45, 42, 40, 37, 35, 32, 30, 27, 25, 22, 20, 17, 15, 12, 10, 7, 5, 2, 0
-    funcionCuadratica db "$$$$$"
-    funcionRaizCuadrada db "$$$$"
+    funcionCuadratica db 199, 196, 191, 184, 175, 164, 151, 136, 119, 100, 79, 56, 31, 4
+    Longitud EQU $- funcionCuadratica
     funcionSenoidal db "$$$$"
       
     Color EQU 0fh ;
@@ -101,12 +102,12 @@
             
             cuadratica:
                 
-                ;call graficoCuadratica
+                call graficoCuadratica
                 jmp bucle
                 
             raiz:
             
-                ;call graficoRaiz
+                call graficoRaiz
                 jmp bucle
                 
             senoidal:
@@ -162,16 +163,11 @@
         xor si, si
         
         call borrarPantalla
-        
-        mov ah, 0h  
-        mov al, 13h ; 320 x 200 Pixeles a Color.
-        int 10h ; Activar el modo video. 
+        call establecerModoVideo
         
         bucleLineal:
         
         mov dl, funcionLineal[si]
-        mov ah, 0ch
-        mov al, Color
         int 10h
         
         add cx, 04h
@@ -184,8 +180,86 @@
         
         ret
         
-    graficoLineal endp
+    graficoCuadratica proc
    
+        push cx
+        push dx
+        push si
+        
+        xor cx, cx
+        xor si, si
+        
+        call borrarPantalla
+        call establecerModoVideo
+          
+        bucleCuadratico:
+        
+        mov dl, funcionCuadratica[si]     
+        inc si
+             
+        mov cx, 0A0h
+        add cx, si
+        int 10h
+        
+        mov cx, 0A0h
+        sub cx, si
+        int 10h   
+        
+        cmp dl, 04h
+            jne bucleCuadratico
+            
+        call borrarPantalla
+        
+        ret     
+   
+    graficoCuadratica endp
+    
+    graficoRaiz proc
+        
+        push bx
+        push cx
+        push dx
+             
+        xor cx, cx
+        xor dx, dx
+        
+        call borrarPantalla
+        call establecerModoVideo
+        
+        mov dl, 0C8h
+        
+        bucleRaiz:
+        
+            mov si, Longitud
+            
+            mov cl, funcionCuadratica[bx]
+            int 10h
+            
+            dec si
+            mov Longitud, si
+        
+            cmp si, 0h
+            jg bucleRaiz
+            
+          pop dx
+          pop cx
+          pop bx      
+         
+        graficoRaiz endp
+    
+    establecerModoVideo proc 
+        
+        mov ah, 0
+        mov al, 13h
+        int 10h
+        
+        mov ah, 0ch
+        mov al, Color
+        
+        ret
+       
+        establecerModoVideo endp
+        
     kbhit proc ; Validar si se ha presionado una tecla, para finalizar el programa
 
         mov ah, 01h 
