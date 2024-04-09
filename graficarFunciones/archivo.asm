@@ -7,12 +7,13 @@
     ; Dictaminada para controlar la navegacion por el menu
     
     variableControl db 0h
-    bandera db 0h 
+    bandera db 0h
+    teclado db 0h 
     
     ; Mensajes Menu     
     
     bienvenida db "--- Bienvenido ---", 10, 10, 13, "El programa actual grafica cuatro de la siguientes funciones matematicas ", 10 , 10, 13, "$"
-    operaciones db "1.- Lineal ", 10, 13, "2.- Cuadratica", 10, 13, "3.- Raiz Cuadrada", 10, 13, "4.- Senoidal", 10, 13, "5.- Salir", 10, 13, "$"
+    operaciones db "1.- Lineal ", 10, 13, "2.- Cuadratica", 10, 13, "3.- Raiz Cuadrada", 10, 13, "4.- Senoidal", 10, 13, "5.- Salir", 10, 10, 13, "$"
     operar db "Como desea operar ? ", 9, "$"
     
     ; Mensajes Control
@@ -23,7 +24,7 @@
     
     ; Valores  
      
-    funcionLineal dw 2, 3, 5, 6, 8, 10, 11, 13, 14, 16, 18, 19, 21, 22, 24, 26, 27, 29, 30, 32, 34, 35, 37, 38, 40, 42, 43, 45, 46, 48, 50, 51, 53, 54, 56, 58, 59, 61, 62, 64, 66, 67, 69, 70, 72, 74, 75, 77, 78, 80, 82, 83, 85, 86, 88, 90, 91, 93, 94, 96, 98, 99, 101, 102, 104, 106, 107, 109, 110, 112, 114, 115, 117, 118, 120, 122, 123, 125, 126, 128, 130, 131, 133, 134, 136, 138, 139, 141, 142, 144, 146, 147, 149, 150, 152, 154, 155, 157, 158, 160, 162, 163, 165, 166, 168, 170, 171, 173, 174, 176, 178, 179, 181, 182, 184, 186, 187, 189, 190, 192, 194, 195, 197, 198, 200, 202, 203, 205, 206, 208, 210, 211, 213, 214, 216, 218, 219, 221, 222, 224, 226, 227, 229, 230, 232, 234, 235, 237, 238, 240, 242, 243, 245, 246, 248, 250, 251, 253, 254, 256, 258, 259, 261, 262, 264, 266, 267, 269, 270, 272, 274, 275, 277, 278, 280, 282, 283, 285, 286, 288, 290, 291, 293, 294, 296, 298, 299, 301, 302, 304, 306, 307, 309, 310, 312, 314, 315, 317, 318, 320
+    funcionLineal db 200, 197, 195, 192, 190, 187, 185, 182, 180, 177, 175, 172, 170, 167, 165, 162, 160, 157, 155, 152, 150, 147, 145, 142, 140, 137, 135, 132, 130, 127, 125, 122, 120, 117, 115, 112, 110, 107, 105, 102, 100, 97, 95, 92, 90, 87, 85, 82, 80, 77, 75, 72, 70, 67, 65, 62, 60, 57, 55, 52, 50, 47, 45, 42, 40, 37, 35, 32, 30, 27, 25, 22, 20, 17, 15, 12, 10, 7, 5, 2, 0
     funcionCuadratica db "$$$$$"
     funcionRaizCuadrada db "$$$$"
     funcionSenoidal db "$$$$"
@@ -143,12 +144,21 @@
        
     borrarPantalla endp
    
+   validar proc
+    
+    ret
+    
+    
+    validar endp
+   
+   
    graficoLineal proc
     
         push cx
         push dx
         push si
         
+        xor cx, cx
         xor si, si
         
         call borrarPantalla
@@ -159,12 +169,12 @@
         
         bucleLineal:
         
-        mov dx, funcionLineal[si]
+        mov dl, funcionLineal[si]
         mov ah, 0ch
         mov al, Color
         int 10h
         
-        inc cx
+        add cx, 04h
         inc si
         
         cmp cx, 140h
@@ -175,5 +185,23 @@
         ret
         
     graficoLineal endp
+   
+    kbhit proc ; Validar si se ha presionado una tecla, para finalizar el programa
+
+        mov ah, 01h 
+        int 16h     ; Leer teclado
+    
+        jnz teclaPresionada ; Si ZF=0, una tecla ha sido presionada
+    
+        mov teclado, 0h ; No se ha presionado ninguna tecla  
+        
+        ret
+    
+            teclaPresionada:
+            
+            mov teclado, 01h ; Tecla presionada
+            ret
+
+       kbhit endp
    
 end code  
