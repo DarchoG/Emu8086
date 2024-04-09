@@ -26,7 +26,7 @@
      
     funcionLineal db 200, 197, 195, 192, 190, 187, 185, 182, 180, 177, 175, 172, 170, 167, 165, 162, 160, 157, 155, 152, 150, 147, 145, 142, 140, 137, 135, 132, 130, 127, 125, 122, 120, 117, 115, 112, 110, 107, 105, 102, 100, 97, 95, 92, 90, 87, 85, 82, 80, 77, 75, 72, 70, 67, 65, 62, 60, 57, 55, 52, 50, 47, 45, 42, 40, 37, 35, 32, 30, 27, 25, 22, 20, 17, 15, 12, 10, 7, 5, 2, 0
     funcionCuadratica db 199, 196, 191, 184, 175, 164, 151, 136, 119, 100, 79, 56, 31, 4
-    Longitud EQU $- funcionCuadratica
+    Longitud EQU $- funcionCuadratica - 01h
     funcionSenoidal db "$$$$"
       
     Color EQU 0fh ;
@@ -218,14 +218,15 @@
         push bx
         push cx
         push dx
-             
+        
+        xor dx, dx     
         xor cx, cx
         xor dx, dx
         
         call borrarPantalla
         call establecerModoVideo
         
-        mov dl, 0C8h
+        mov dx, 0C8h
         
         bucleRaiz:
         
@@ -235,10 +236,14 @@
             int 10h
             
             inc bx
-         
+            dec dx
+                     
             cmp si, 0h
             jg bucleRaiz
-            
+                
+                
+          call borrarPantalla      
+                
           pop dx
           pop cx
           pop bx      
