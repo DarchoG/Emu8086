@@ -1,4 +1,3 @@
-
 .model small
 
 .stack 100h
@@ -231,13 +230,12 @@
         bucleRaiz:
         
             mov si, Longitud
-            
-            mov cl, funcionCuadratica[bx]
+            sub si, bx
+            mov cl, funcionCuadratica[si]
             int 10h
             
-            dec si
-            mov Longitud, si
-        
+            inc bx
+         
             cmp si, 0h
             jg bucleRaiz
             
