@@ -12,4 +12,4 @@
 
 **4°-** Se detiene el bucle al detectar cualquier tecla ingresada por el usuario mediante la interrupción 16h.
 
-**Nota:** El archivo de Excel contiene los cálculos referentes las coordenadas empleadas para la representación de la circunferencia.
+**Nota:** El archivo de Excel contiene los cálculos referentes a las coordenadas empleadas para la representación de la circunferencia.
