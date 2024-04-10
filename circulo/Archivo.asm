@@ -97,7 +97,7 @@
             
             xor ax, ax
            
-            mov ax, 03h
+            mov ax, 13h
             int 10h
             
             pop ax
