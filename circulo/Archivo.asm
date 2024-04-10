@@ -68,6 +68,8 @@
     
     kbhit proc
         
+        push ax
+        
         mov ah, 01h
         int 16h
         
@@ -75,11 +77,15 @@
         
         mov Bandera, 0h
         
+        pop ax
+        
         ret
         
             teclaPresionada:
             
                 mov bandera, 01h
+                
+                pop ax       
                 
                 ret
                 
@@ -88,6 +94,8 @@
        borrarPantalla proc
             
             push ax 
+            
+            xor ax, ax
            
             mov ax, 03h
             int 10h
@@ -132,6 +140,7 @@
             jne bucleCirculo
             
             call borrarPantalla
+            call activarModoVideo
             
             xor si, si
             xor di, di
