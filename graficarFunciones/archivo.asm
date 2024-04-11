@@ -45,6 +45,8 @@
     
         bucle:
         
+            call borrarPantalla
+            
             mov ah, 09h
             lea dx, bienvenida
             int 21h
@@ -111,7 +113,7 @@
                 
             senoidal:
                 
-                call graficoSenoidal
+                ;call graficoSenoidal
                 jmp bucle
                           
     menu endp
@@ -166,6 +168,10 @@
         
         bucleLineal:
         
+        call kbhit
+        cmp teclado, 0h
+        jne terminarLineal
+        
         mov dl, funcionLineal[si]
         int 10h
         
@@ -174,9 +180,19 @@
         
         cmp cx, 140h
         jne bucleLineal
-        
+         
         call borrarPantalla
+        call establecerModoVideo
+          
+        xor cx, cx
+        xor si, si
         
+        terminarLineal:
+                
+        pop si
+        pop dx
+        pop cx  
+           
         ret
         
     graficoCuadratica proc
@@ -264,19 +280,26 @@
         establecerModoVideo endp
         
     kbhit proc ; Validar si se ha presionado una tecla, para finalizar el programa
+        
+        push ax
 
         mov ah, 01h 
         int 16h     ; Leer teclado
     
         jnz teclaPresionada ; Si ZF=0, una tecla ha sido presionada
     
-        mov teclado, 0h ; No se ha presionado ninguna tecla  
+        mov teclado, 0h ; No se ha presionado ninguna tecla   
+        
+        pop ax
         
         ret
     
             teclaPresionada:
             
             mov teclado, 01h ; Tecla presionada
+            
+            pop ax
+            
             ret
 
        kbhit endp
