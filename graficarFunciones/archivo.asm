@@ -13,7 +13,7 @@
     ; Mensajes Menu     
     
     bienvenida db "--- Bienvenido ---", 10, 10, 13, "El programa actual grafica cuatro de la siguientes funciones matematicas ", 10 , 10, 13, "$"
-    operaciones db "1.- Lineal ", 10, 13, "2.- Cuadratica", 10, 13, "3.- Raiz Cuadrada", 10, 13, "4.- Senoidal", 10, 13, "5.- Salir", 10, 10, 13, "$"
+    operaciones db "1.- Lineal ", 10, 13, "2.- Cuadratica", 10, 13, "3.- Raiz Cuadrada", 10, 13, "4.- Senoidal", 10, 13, "5.- Circular", 10, 13, "6.- Salir", 10, 10, 13, "$"
     operar db "Como desea operar ? ", 9, "$"
     
     ; Mensajes Control
@@ -29,6 +29,8 @@
     funcionRaiz dw 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289
     funcionSenoidal db 100, 87, 75, 63, 52, 41, 32, 23, 16, 10, 5, 2, 0, 0, 2, 5, 10, 16, 23, 32, 41, 52, 63, 75, 87, 100, 113, 125, 137, 148, 159, 168, 177, 184, 190, 195, 198, 200, 200, 198, 195, 190, 184, 177, 168, 159, 148, 137, 125, 113 
     longitudSenoidal EQU $- funcionSenoidal
+    funcionCircularEjeX db 240, 240, 239, 237, 235, 233, 229, 226, 221, 217, 211, 206, 200, 194, 187, 181, 174, 167, 160, 153, 146, 139, 133, 126, 120, 114, 109, 103, 99, 94, 91, 87, 85, 83, 81, 80, 80, 80, 81, 83, 85, 87, 91, 94, 99, 103, 109, 114, 120, 126, 133, 139, 146, 153, 160, 167, 174, 181, 187, 194, 200, 206, 211, 217, 221, 226, 229, 233, 235, 237, 239, 240, 240, 255
+    funcionCircularEjeY  db 100, 107, 114, 121, 127, 134, 140, 146, 151, 157, 161, 166, 169, 173, 175, 177, 179, 180, 180, 180, 179, 177, 175, 173, 169, 166, 161, 157, 151, 146, 140, 134, 127, 121, 114, 107, 100, 93, 86, 79, 73, 66, 60, 54, 49, 43, 39, 34, 31, 27, 25, 23, 21, 20, 20, 20, 21, 23, 25, 27, 31, 34, 39, 43, 49, 54, 60, 66, 73, 79, 86, 93, 100, 255
       
     Color EQU 0fh ;
     
@@ -79,10 +81,12 @@
             cmp al, 04h
                 je senoidal
             
-            cmp al, 05h
+            cmp al, 05h 
+                je circular
                 
+            cmp al, 06h  
                 jne seguir
-                ret
+                ret    
                 
             seguir:    
             
@@ -119,6 +123,11 @@
                 
                 call graficoSenoidal
                 jmp bucle
+            
+            circular:
+                
+                call graficoCircular
+                jmp bucle    
                           
     menu endp
    
@@ -208,7 +217,7 @@
         mov ah, 01h 
         int 16h     ; Leer teclado
     
-        jnz teclaPresionada ; 
+        jnz teclaPresionada  
     
         mov teclado, 0h 
         pop ax
@@ -217,13 +226,13 @@
     
             teclaPresionada:
             
-            mov ah, 01h
-            int 21h
-            
-            mov teclado, 01h ; Tecla presionada
-            pop ax
-            
-            ret
+                mov ah, 01h
+                int 21h
+                
+                mov teclado, 01h ; Tecla presionada
+                pop ax
+                
+                ret
 
        kbhit endp
    
@@ -423,5 +432,56 @@
                 jmp bucleSenoidal
                 
         graficoSenoidal endp
+    
+    graficoCircular proc
+        
+        push cx
+        push dx 
+        push si
+        push di
+               
+        call validar       
+        call borrarPantalla
+        call establecerModoVideo
+         
+        xor cx, cx
+        xor dx, cx 
+        xor si, si
+        xor di, di
+        
+        bucleCirculo:
+               
+            call kbhit
+            cmp teclado, 01h
+            je terminarCirculo 
+            
+            mov cl, funcionCircularEjeX[si]
+            mov dl, funcionCircularEjeY[di]
+            int 10h
+            
+            inc si
+            inc di
+   
+            cmp funcionCircularEjeX[si + 1], 0FFh
+            jne bucleCirculo
+            
+            call borrarPantalla
+            call establecerModoVideo
+            
+            xor si, si
+            xor di, di
+            
+            jmp bucleCirculo
+            
+         terminarCirculo:    
+         
+             pop di
+             pop si
+             pop dx
+             pop cx
+               
+             ret 
+          
+        graficoCircular endp
     
 end code  
