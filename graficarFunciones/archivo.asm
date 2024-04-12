@@ -19,15 +19,16 @@
     ; Mensajes Control
     
     error db 13, "El dato ingresado no comprende ninguna opcion valida, favor de introducir un dato valido.", 10 ,10, 13, "$"
-    continuar db "Presione cualquier tecla para continuar.", 10, 13, "$"
+    continuar db "Presione cualquier tecla para continuar . . . ", "$"
     explicacion db "La funcion se graficara indefindamente hasta detectar cualquier tecla (Este mensaje solo se mostrara una vez)", 10, 13, "$"
     
     ; Valores  
      
     funcionLineal db 200, 197, 195, 192, 190, 187, 185, 182, 180, 177, 175, 172, 170, 167, 165, 162, 160, 157, 155, 152, 150, 147, 145, 142, 140, 137, 135, 132, 130, 127, 125, 122, 120, 117, 115, 112, 110, 107, 105, 102, 100, 97, 95, 92, 90, 87, 85, 82, 80, 77, 75, 72, 70, 67, 65, 62, 60, 57, 55, 52, 50, 47, 45, 42, 40, 37, 35, 32, 30, 27, 25, 22, 20, 17, 15, 12, 10, 7, 5, 2, 0
     funcionCuadratica db 199, 196, 191, 184, 175, 164, 151, 136, 119, 100, 79, 56, 31, 4
-    Longitud EQU $- funcionCuadratica - 01h
+    funcionRaiz dw 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289
     funcionSenoidal db 100, 87, 75, 63, 52, 41, 32, 23, 16, 10, 5, 2, 0, 0, 2, 5, 10, 16, 23, 32, 41, 52, 63, 75, 87, 100, 113, 125, 137, 148, 159, 168, 177, 184, 190, 195, 198, 200, 200, 198, 195, 190, 184, 177, 168, 159, 148, 137, 125, 113 
+    longitudSenoidal EQU $- funcionSenoidal
       
     Color EQU 0fh ;
     
@@ -93,6 +94,9 @@
             lea dx, continuar
             int 21h
             
+            mov ah, 01h
+            int 21h
+            
             call borrarPantalla
             jmp bucle
             
@@ -113,7 +117,7 @@
                 
             senoidal:
                 
-                ;call graficoSenoidal
+                call graficoSenoidal
                 jmp bucle
                           
     menu endp
@@ -128,6 +132,7 @@
         int 21h
         
         pop dx
+        pop ax
         
         ret
     
@@ -137,7 +142,7 @@
         
         push ax
         
-        mov ax, 3
+        mov ax, 03h
         int 10h
         
         pop ax
@@ -145,126 +150,7 @@
         ret
        
     borrarPantalla endp
-   
-   validar proc
-    
-    ret
-    
-    
-    validar endp
-   
-   
-   graficoLineal proc
-    
-        push cx
-        push dx
-        push si
-        
-        xor cx, cx
-        xor si, si
-        
-        call borrarPantalla
-        call establecerModoVideo
-        
-        bucleLineal:
-        
-        call kbhit
-        cmp teclado, 0h
-        jne terminarLineal
-        
-        mov dl, funcionLineal[si]
-        int 10h
-        
-        add cx, 04h
-        inc si
-        
-        cmp cx, 140h
-        jne bucleLineal
-         
-        call borrarPantalla
-        call establecerModoVideo
-          
-        xor cx, cx
-        xor si, si
-        
-        terminarLineal:
-                
-        pop si
-        pop dx
-        pop cx  
-           
-        ret
-        
-    graficoCuadratica proc
-   
-        push cx
-        push dx
-        push si
-        
-        xor cx, cx
-        xor si, si
-        
-        call borrarPantalla
-        call establecerModoVideo
-          
-        bucleCuadratico:
-        
-        mov dl, funcionCuadratica[si]     
-        inc si
-             
-        mov cx, 0A0h
-        add cx, si
-        int 10h
-        
-        mov cx, 0A0h
-        sub cx, si
-        int 10h   
-        
-        cmp dl, 04h
-            jne bucleCuadratico
-            
-        call borrarPantalla
-        
-        ret     
-   
-    graficoCuadratica endp
-    
-    graficoRaiz proc
-        
-        push bx
-        push cx
-        push dx
-        
-        xor dx, dx     
-        xor cx, cx
-        xor dx, dx
-        
-        call borrarPantalla
-        call establecerModoVideo
-        
-        mov dx, 0C8h
-        
-        bucleRaiz:
-        
-            mov si, Longitud
-            sub si, bx
-            mov cl, funcionCuadratica[si]
-            int 10h
-            
-            inc bx
-            dec dx
-                     
-            cmp si, 0h
-            jg bucleRaiz
-                
-                
-          call borrarPantalla      
-                
-          pop dx
-          pop cx
-          pop bx      
-         
-        graficoRaiz endp
+      
     
     establecerModoVideo proc 
         
@@ -278,30 +164,264 @@
         ret
        
         establecerModoVideo endp
+           
+   validar proc
+    
+        push ax
+        push dx
         
-    kbhit proc ; Validar si se ha presionado una tecla, para finalizar el programa
+        mov al, bandera
+        
+        cmp al, 01h
+        je terminarValidar
+        
+        call borrarPantalla
+        
+        mov ah, 09h
+        lea dx, explicacion
+        int 21h
+        
+        call saltoLinea 
+        
+        mov ah, 09h
+        lea dx, continuar
+        int 21h
+        
+        mov ah, 01h
+        int 21h
+        
+        mov bandera, 01h
+        
+        terminarValidar:
+        
+            pop dx
+            pop ax
+   
+            ret
+   
+    validar endp
+   
+       kbhit proc ; Validar si se ha presionado una tecla, para finalizar el programa
         
         push ax
 
         mov ah, 01h 
         int 16h     ; Leer teclado
     
-        jnz teclaPresionada ; Si ZF=0, una tecla ha sido presionada
+        jnz teclaPresionada ; 
     
-        mov teclado, 0h ; No se ha presionado ninguna tecla   
-        
+        mov teclado, 0h 
         pop ax
         
         ret
     
             teclaPresionada:
             
-            mov teclado, 01h ; Tecla presionada
+            mov ah, 01h
+            int 21h
             
+            mov teclado, 01h ; Tecla presionada
             pop ax
             
             ret
 
        kbhit endp
    
+   graficoLineal proc
+    
+        push cx
+        push dx
+        push si
+        
+        xor cx, cx
+        xor si, si
+        
+        call validar 
+        call borrarPantalla
+        call establecerModoVideo
+        
+        bucleLineal:
+        
+            call kbhit
+            cmp teclado, 0h
+            jne terminarLineal
+            
+            mov dl, funcionLineal[si]
+            int 10h
+            
+            add cx, 04h
+            inc si
+            
+            cmp cx, 140h
+            jne bucleLineal
+             
+            call borrarPantalla
+            call establecerModoVideo
+              
+            xor cx, cx
+            xor si, si
+            jmp bucleLineal
+        
+        terminarLineal:
+                
+            pop si
+            pop dx
+            pop cx  
+               
+            ret
+            
+    graficoCuadratica proc
+   
+        push cx
+        push dx
+        push si
+        
+        xor cx, cx
+        xor si, si
+                   
+        call validar            
+        call borrarPantalla
+        call establecerModoVideo
+          
+        bucleCuadratico:
+        
+            call kbhit
+            cmp teclado, 0h
+            jne terminarCuadratico
+            
+            mov dl, funcionCuadratica[si]     
+            inc si
+                 
+            mov cx, 0A0h
+            add cx, si
+            int 10h
+            
+            mov cx, 0A0h
+            sub cx, si
+            int 10h   
+            
+            cmp dl, 04h
+            jne bucleCuadratico
+                
+            call borrarPantalla
+            call establecerModoVideo
+            
+            xor cx, cx
+            xor si, si
+            
+            jmp bucleCuadratico
+            
+            terminarCuadratico:              
+                  
+                pop si
+                pop dx
+                pop cx
+            
+                ret    
+   
+    graficoCuadratica endp
+    
+    graficoRaiz proc
+        
+        push cx
+        push dx
+        push si
+        
+        xor si, si
+        xor dx, dx     
+        xor cx, cx
+        
+        call validar 
+        call borrarPantalla
+        call establecerModoVideo
+        
+        mov dx, 0C8h ; 200 Decimal
+        
+        bucleRaiz:   
+        
+            call kbhit
+            cmp teclado, 0h
+            jne terminarRaiz
+        
+            mov cx, funcionRaiz[si]
+            int 10h
+            
+            add si, 02h
+            dec dx
+                     
+            cmp cx, 0121h 
+            jne bucleRaiz
+                   
+          call borrarPantalla
+          call establecerModoVideo
+           
+          xor si, si 
+          mov dx, 0C8h
+          
+          jmp bucleRaiz
+          
+          terminarRaiz:      
+                
+              pop cx
+              pop dx
+              pop si
+              
+              ret      
+             
+        graficoRaiz endp
+    
+    graficoSenoidal proc
+        
+        push cx
+        push dx
+        push si
+        
+        xor cx, cx
+        xor si, si
+        
+        call validar
+        call borrarPantalla
+        call EstablecerModoVideo
+        
+        bucleSenoidal:
+        
+            call kbhit
+            cmp teclado, 0h
+            jne terminarSenoidal
+        
+            mov dl, funcionSenoidal[si]
+            int 10h
+            
+            inc cx
+            inc si
+            
+            cmp cx, 140h
+            je limpiar
+             
+            cmp si, longitudSenoidal
+            jl bucleSenoidal
+            
+            xor si, si
+            jmp bucleSenoidal
+                              
+            terminarSenoidal:
+            
+                pop si
+                pop dx
+                pop cx
+                
+                ret 
+                
+            limpiar:
+            
+                xor cx, cx
+                xor si, si
+            
+                call borrarPantalla
+                call establecerModoVideo
+                
+                jmp bucleSenoidal
+                
+        graficoSenoidal endp
+    
 end code  
