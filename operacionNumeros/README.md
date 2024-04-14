@@ -55,3 +55,5 @@
 **push:** Permite crear un duplicado de los valores de mis registros haciendo uso de mi stack (pila), es equivalente a un paso por valor en funciones parametrizadas en C.
 
 **pop:** Retorna el valor almacenado con push.
+
+**Video Explicativo:** https://youtu.be/FvSI5vadMdA
