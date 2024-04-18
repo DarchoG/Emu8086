@@ -100,7 +100,6 @@
             mov ah, 01h
             int 21h
             
-            call borrarPantalla
             jmp bucle
             
             lineal: 
@@ -483,4 +482,4 @@
           
         graficoCircular endp
     
-end code  
+end code 
