@@ -6,11 +6,11 @@ Determina si el número ingresado es primo.
 
 **2.-** El algoritmo empleado en ensamblador divide todos los números inferiores al ingresado empezando por el 2, si es detectado residuo 0 significa que el número es divisible por otro, por lo tanto, se cancela el bucle y es indicado que el número no es primo, en caso contrario al llegar a su mismo valor connota que solo es divisible por el mismo y 1, satisfaciendo la definición de número primo.
 
-- **2.1-** Es cargado en memoria el parámetro que contiene nuestro número en eax e inicializamos ebx en 2 para dividir subsecuentemente sobre este mismo y los casos bases.
+- **2.1.-** Es cargado en memoria el parámetro que contiene nuestro número en eax e inicializamos ebx en 2 para dividir subsecuentemente sobre este mismo y los casos bases.
 
 - **2.2.-** Guardamos un respaldo del valor en eax o cargado, ya que la operación div altera los registros ax y dx.
 
-  - **2.2.1-** La operación div espera como divisor el registro donde se llama la operación y el dividendo el registro ax, actualiza ax con el respectivo numerador y dx con residuo.
+  - **2.2.1.-** La operación div espera como divisor el registro donde se llama la operación y el dividendo el registro ax, actualiza ax con el respectivo numerador y dx con residuo.
 
 - **2.3.-** Comparamos si el residuo es igual a 0, en dado caso el dato es divisible y no es un número primo, en caso contrario volvemos a restaurar el dividendo e incrementamos para iterar el siguiente criterio de divisibilidad, es importante limpiar el registro dx contenedor del residuo de la división anterior ya que podría suscitarnos resultados inesperados al tenerlo contemplado en la siguiendo división.
 
