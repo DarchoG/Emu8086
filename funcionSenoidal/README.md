@@ -1,4 +1,4 @@
-**Funcionamiento**
+# **Funcionamiento**
 
 **1°.** Es activado el modo video.
 
@@ -10,7 +10,7 @@
 
 **5°.** Si se detecta algún input del teclado el programa finaliza.
 
-**Interrupciones**
+# **Interrupciones**
 
 **Int 10h:** Permite el modo video, en **al** se aloja las propiedades del mismo, al 13h brinda de una pantalla de 320x200 pixeles.
 
@@ -20,7 +20,7 @@
 
 **Int 16h (01 ah):** Solicita la lectura del teclado sin espera (Usada para romper el bucle).
 
-**Funciones**
+# **Funciones**
 
 **jnz:** Jump if Not Zero, brinca si no es 0, comprueba el valor de la bandera ZF (Zero Flag).
 **13:** En ASCII permite retornar el cursor al inicio, usado para imprimir el primer mensaje.
