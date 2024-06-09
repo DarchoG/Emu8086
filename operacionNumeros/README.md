@@ -1,4 +1,4 @@
-**--- Funcionamiento ---**
+# **Funcionamiento**
 
 **1°-** Lee los caracteres ingresados en ASCII y los almacena en las variables primer y segundo número, permite únicamente el ingreso de datos validos comprendidos entre 0 y 9 con excepción del signo "-" para indicar resta exclusivamente en el primer ingreso, el string seguirá leyendo hasta detectar un carácter invalido.
 
@@ -16,9 +16,9 @@
 
 **5.2°-** Se lee con dos punteros, uno al **final** de valor auxiliar (contenedor de mi división Euclidiana) y otro al **inicio** en operación que será el contenedor de mi resultado nuevo, en cada iteración se recorren ambos punteros hasta terminar su lectura en donde colocara el signo "$" para indicar el término del string al momento de imprimirlo a pantalla.
 
-**--- Aprendizaje ---**
+# **Aprendizaje**
 
-**Registros**
+## **Registros**
 
 **• AX:** Acumulador, mediante este registro se ejecutan todas las operaciones básicas aritméticas, algunas requieren de carácter exclusivo realizarse mediante este registro multipropósito.
 
@@ -30,7 +30,7 @@
 
 **• DS:** Data Segment, al declarar mi sección de variables necesito hacer uso de un registro para mover todas mis variables a memoria disponible a ser usada en mi programa.
 
-**Interrupciones**
+## **Interrupciones**
 
 **Int 21h (01h Ah):** Lee un carácter, lo almacena en al.
 
@@ -38,7 +38,7 @@
 
 **Int 21h (04ch Ah):** Termina el programa.
 
-**Funciones**
+## **Funciones**
 
 **LEA:** Load Effective Address, carga la dirección en memoria de una variable.
 
