@@ -1,4 +1,4 @@
-**Funcionamiento**
+# **Funcionamiento**
 
 **1°-** Es activado el modo video.
 
