@@ -36,8 +36,9 @@
     funcionSenoidal db 100, 87, 75, 63, 52, 41, 32, 23, 16, 10, 5, 2, 0, 0, 2, 5, 10, 16, 23, 32, 41, 52, 63, 75, 87, 100, 113, 125, 137, 148, 159, 168, 177, 184, 190, 195, 198, 200, 200, 198, 195, 190, 184, 177, 168, 159, 148, 137, 125, 113 
     longitudSenoidal EQU $- funcionSenoidal
     
-    funcionCircularEjeX db 240, 240, 239, 237, 235, 233, 229, 226, 221, 217, 211, 206, 200, 194, 187, 181, 174, 167, 160, 153, 146, 139, 133, 126, 120, 114, 109, 103, 99, 94, 91, 87, 85, 83, 81, 80, 80, 80, 81, 83, 85, 87, 91, 94, 99, 103, 109, 114, 120, 126, 133, 139, 146, 153, 160, 167, 174, 181, 187, 194, 200, 206, 211, 217, 221, 226, 229, 233, 235, 237, 239, 240, 240, 255
-    funcionCircularEjeY  db 100, 107, 114, 121, 127, 134, 140, 146, 151, 157, 161, 166, 169, 173, 175, 177, 179, 180, 180, 180, 179, 177, 175, 173, 169, 166, 161, 157, 151, 146, 140, 134, 127, 121, 114, 107, 100, 93, 86, 79, 73, 66, 60, 54, 49, 43, 39, 34, 31, 27, 25, 23, 21, 20, 20, 20, 21, 23, 25, 27, 31, 34, 39, 43, 49, 54, 60, 66, 73, 79, 86, 93, 100, 255
+    funcionCircularEjeX db 240, 240, 239, 237, 235, 233, 229, 226, 221, 217, 211, 206, 200, 194, 187, 181, 174, 167, 160, 153, 146, 139, 133, 126, 120, 114, 109, 103, 99, 94, 91, 87, 85, 83, 81, 80, 80, 80, 81, 83, 85, 87, 91, 94, 99, 103, 109, 114, 120, 126, 133, 139, 146, 153, 160, 167, 174, 181, 187, 194, 200, 206, 211, 217, 221, 226, 229, 233, 235, 237, 239, 240, 240
+    funcionCircularEjeY  db 100, 107, 114, 121, 127, 134, 140, 146, 151, 157, 161, 166, 169, 173, 175, 177, 179, 180, 180, 180, 179, 177, 175, 173, 169, 166, 161, 157, 151, 146, 140, 134, 127, 121, 114, 107, 100, 93, 86, 79, 73, 66, 60, 54, 49, 43, 39, 34, 31, 27, 25, 23, 21, 20, 20, 20, 21, 23, 25, 27, 31, 34, 39, 43, 49, 54, 60, 66, 73, 79, 86, 93, 100
+    longitudCircular EQU $- funcionCircularEjeY
       
     Color EQU 0fh ;
     
@@ -232,7 +233,7 @@
     
             teclaPresionada:
             
-                mov ah, 01h
+                mov ah, 01h  ; Recoger la tecla presionada como valor residual
                 int 21h
                 
                 mov teclado, 01h ; Tecla presionada
@@ -258,8 +259,8 @@
         bucleLineal:
         
             call kbhit
-            cmp teclado, 0h
-            jne terminarLineal
+            cmp teclado, 01h
+            je terminarLineal
             
             mov dl, funcionLineal[si]
             int 10h
@@ -301,8 +302,8 @@
         bucleCuadratico:
         
             call kbhit
-            cmp teclado, 0h
-            jne terminarCuadratico
+            cmp teclado, 01h
+            je terminarCuadratico
             
             mov dl, funcionCuadraticaEjeY[si]     
             inc si
@@ -326,13 +327,13 @@
             
             jmp bucleCuadratico
             
-            terminarCuadratico:              
+        terminarCuadratico:              
                   
-                pop si
-                pop dx
-                pop cx
+            pop si
+            pop dx
+            pop cx
             
-                ret    
+            ret    
    
     graficoCuadratica endp
     
@@ -353,10 +354,10 @@
         call establecerModoVideo
         
         bucleRaiz:   
-        
+                                            
             call kbhit
-            cmp teclado, 0h
-            jne terminarRaiz
+            cmp teclado, 01h
+            je terminarRaiz
             
             mov cx, funcionRaizEjeX[si]
             mov dl, funcionRaizEjeY[di]
@@ -368,22 +369,22 @@
             cmp di, longitudRaiz 
             jne bucleRaiz
                    
-          call borrarPantalla
-          call establecerModoVideo
+            call borrarPantalla
+            call establecerModoVideo
            
-          xor si, si 
-          xor di, di
+            xor si, si 
+            xor di, di
           
-          jmp bucleRaiz
+            jmp bucleRaiz
           
-          terminarRaiz:      
+        terminarRaiz:      
                 
-              pop cx
-              pop dx
-              pop si
-              pop di
+          pop cx
+          pop dx
+          pop si
+          pop di
               
-              ret      
+          ret      
              
         graficoRaiz endp
     
@@ -405,7 +406,7 @@
             call kbhit
             cmp teclado, 0h
             jne terminarSenoidal
-        
+             
             mov dl, funcionSenoidal[si]
             int 10h
             
@@ -420,15 +421,7 @@
             
             xor si, si
             jmp bucleSenoidal
-                              
-            terminarSenoidal:
             
-                pop si
-                pop dx
-                pop cx
-                
-                ret 
-                
             limpiar:
             
                 xor cx, cx
@@ -438,6 +431,14 @@
                 call establecerModoVideo
                 
                 jmp bucleSenoidal
+                              
+         terminarSenoidal:
+            
+            pop si
+            pop dx
+            pop cx
+                
+            ret 
                 
         graficoSenoidal endp
     
@@ -470,7 +471,7 @@
             inc si
             inc di
    
-            cmp funcionCircularEjeX[si + 1], 0FFh
+            cmp si, longitudCircular
             jne bucleCirculo
             
             call borrarPantalla
@@ -481,14 +482,14 @@
             
             jmp bucleCirculo
             
-         terminarCirculo:    
+        terminarCirculo:    
          
-             pop di
-             pop si
-             pop dx
-             pop cx
+            pop di
+            pop si
+            pop dx
+            pop cx
                
-             ret 
+            ret 
           
         graficoCircular endp
     
