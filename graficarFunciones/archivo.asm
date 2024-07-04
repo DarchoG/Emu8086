@@ -271,7 +271,6 @@
             cmp cx, 140h
             jne bucleLineal
              
-            call borrarPantalla
             call establecerModoVideo
               
             xor cx, cx
@@ -319,7 +318,6 @@
             cmp si, longitudCuadratica
             jne bucleCuadratico
                 
-            call borrarPantalla
             call establecerModoVideo
             
             xor cx, cx
@@ -369,7 +367,6 @@
             cmp di, longitudRaiz 
             jne bucleRaiz
                    
-            call borrarPantalla
             call establecerModoVideo
            
             xor si, si 
@@ -427,7 +424,6 @@
                 xor cx, cx
                 xor si, si
             
-                call borrarPantalla
                 call establecerModoVideo
                 
                 jmp bucleSenoidal
@@ -474,7 +470,6 @@
             cmp si, longitudCircular
             jne bucleCirculo
             
-            call borrarPantalla
             call establecerModoVideo
             
             xor si, si
