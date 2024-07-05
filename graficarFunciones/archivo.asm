@@ -11,7 +11,7 @@
     
     ; Mensajes Menu     
     
-    bienvenida db "--- Bienvenido ---", 10, 10, 13, "El programa actual grafica cuatro de la siguientes funciones matematicas ", 10 , 10, 13, "$"
+    bienvenida db "--- Bienvenido ---", 10, 10, 13, "El programa actual grafica cinco de la siguientes funciones matematicas ", 10 , 10, 13, "$"
     operaciones db "1.- Lineal ", 10, 13, "2.- Cuadratica", 10, 13, "3.- Raiz Cuadrada", 10, 13, "4.- Senoidal", 10, 13, "5.- Circular", 10, 13, "6.- Salir", 10, 10, 13, "$"
     operar db "Como desea operar ? ", 9, "$"
     
