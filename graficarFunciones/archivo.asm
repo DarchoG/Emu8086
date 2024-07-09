@@ -220,7 +220,7 @@
     validar endp
     
     
-    kbhit proc ; Validar si se ha presionado una tecla, para finalizar el programa
+    kbhit proc ; Validar si se ha presionado una tecla para finalizar el programa
         
         push ax
         
