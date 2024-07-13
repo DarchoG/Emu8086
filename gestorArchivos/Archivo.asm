@@ -26,7 +26,7 @@
     stringPalabrasInvertidas 3 dup("$")
     stringPalabras 3 dup("$")
     
-    bandera db 01h
+    bandera db 0h
        
 .code
     
@@ -205,13 +205,18 @@
            inc si
            
            cmp al, 20h
-           jne leerLetra
+           je incrementarContador
            
-           cmp bandera, 01h
-           jne leerLetra
-           
-           mov bandera, 0h
-           inc bl
+           mov bandera, 01h
+           jmp leerLetra
+            
+           incrementarContador: 
+              
+               cmp bandera, 01h
+               jne leerLetra
+               
+               mov bandera, 0h
+               inc bl
            
        finContar:
        
@@ -238,12 +243,12 @@
         xor di, di
         
         mov al, numeroPalabras
-        mov bx, 0Ah 
+        mov bl, 0Ah 
         
         division:
         
-            div bx
-            add dx, 30h
+            div bl
+            add ah, 30h
             mov stringPalabrasInvertidas[si], ah
             xor ah, ah
             inc si
