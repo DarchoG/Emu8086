@@ -8,7 +8,10 @@
     manejador dw 0
     
     primerMensaje db "Se ha creado el archivo satisfactoriamente.", 13, 10, 10, "$"
-    segundoMensaje db "Se ha abrierto el archivo exitosamente, AL contiene el handle o identificador unico del archivo", 13, 10, 10, "$"
+    segundoMensaje db "Se ha abierto el archivo exitosamente, AL contiene el handle o identificador unico del archivo", 13, 10, 10, "$"
+    tercerMensaje db "Se ha escrito en el archivo adecuadamente.", 13, 10, 10, "$"
+    cuartoMensaje db "Se ha leido el archivo apropiadamente.", 13, 10, 10, "$"
+    quintoMensaje db "El numero de palabras contenido es: ", "$"
     
     pausa db "Pulse cualquier tecla para continuar.", 13, 10, 10, "$" 
      
@@ -18,8 +21,12 @@
     longitudTexto dw 0h
      
     textoLeido db 255 dup ("$")
+    
     numeroPalabras db 0h
+    stringPalabrasInvertido 3 dup("$")
     stringPalabras 3 dup("$")
+    
+    bandera db 1h
        
 .code
     
@@ -27,10 +34,13 @@
     mov ds, ax
      
     call crearArchivo
-    call lecturaString
+    call leerString
     call abrirArchivo
     call escribirArchivo
-    call lecturaArchivo
+    call leerArchivo
+    call contarString
+    call transformarNumero
+    call mostrarPalabras
     ;call menu
    
     mov ax, 04ch
@@ -59,7 +69,7 @@
                   
     crearArchivo endp
     
-    lecturaString proc
+    leerString proc
         
         push ax
         push si
@@ -106,7 +116,7 @@
             
             ret
             
-    lecturaString endp
+    leerString endp
     
     abrirArchivo proc 
         
@@ -160,12 +170,107 @@
         push cx
         push dx
         
+        mov ax, 0h
+        mov ah, 3Fh
+        mov bx, manejador
+        mov cx, longitudTexto
+        lea dx, textoLeido
         
+        int 21h
+         
         pop dx
         pop cx
         pop bx
         pop ax
        
-    leerArchivo endp
+    leerArchivo endp 
+    
+    contarString proc
+        
+       push ax
+       push si
+       
+       xor ax, ax 
+       xor si, si
+       
+       leerLetra:
+           
+           mov al, textoLeido[si]
+           
+           cmp si, longitudTexto
+           je finContar
+           
+           inc si
+           
+           cmp al, 20h
+           jne leerLetra
+           
+           cmp bandera, 01h
+           jne leerLetra
+           
+           mov bandera, 0h
+           inc numeroPalabras
+           
+       finContar:
+       
+           pop si
+           pop si
+       
+           ret     
+        
+    contarString endp
+    
+    transformarNumero proc 
+        
+        push ax
+        push bx
+        push dx
+        push si
+        push di
+        
+        mov al, numeroPalabras
+        mov bx, 0Ah 
+        
+        division:
+        
+            div bx
+            add dx, 30h
+            mov stringPalabrasInvertidas[si], dl
+            xor dx, dx
+            inc si
+            
+            cmp ax, 0h
+            jne division
+        
+        invertirString:
+            
+            xor di, di
+            mov ax, si
+            
+            invertir:
+            
+                mov stringPalabras[di], stringPalabrasInvertido[si]
+                inc di
+                dec si
+                
+                cmp di, ax
+                jne invertir
+                
+                pop di
+                pop si
+                pop dx
+                pop bx
+                pop ax
+                
+                ret
+             
+    transformarNumero endp
+    
+    mostrarPalabras proc
+        
+        
+        
+        
+    mostrarPalabras endp
     
 end code
