@@ -11,7 +11,7 @@
     segundoMensaje db "Se ha abierto el archivo exitosamente, AL contiene el handle o identificador unico del archivo", 13, 10, 10, "$"
     tercerMensaje db "Se ha escrito en el archivo adecuadamente.", 13, 10, 10, "$"
     cuartoMensaje db "Se ha leido el archivo apropiadamente.", 13, 10, 10, "$"
-    quintoMensaje db "El numero de palabras contenido es: ", "$"
+    quintoMensaje db "El numero de palabras del contenido es: ", "$"
     
     pausa db "Pulse cualquier tecla para continuar.", 13, 10, 10, "$" 
      
@@ -23,10 +23,10 @@
     textoLeido db 255 dup ("$")
     
     numeroPalabras db 0h
-    stringPalabrasInvertido 3 dup("$")
+    stringPalabrasInvertidas 3 dup("$")
     stringPalabras 3 dup("$")
     
-    bandera db 1h
+    bandera db 01h
        
 .code
     
@@ -188,9 +188,11 @@
     contarString proc
         
        push ax
+       push bx
        push si
        
-       xor ax, ax 
+       xor ax, ax
+       xor bx, bx 
        xor si, si
        
        leerLetra:
@@ -209,12 +211,15 @@
            jne leerLetra
            
            mov bandera, 0h
-           inc numeroPalabras
+           inc bl
            
        finContar:
        
+           mov numeroPalabras, bl
+           
            pop si
-           pop si
+           pop bx
+           pop ax
        
            ret     
         
@@ -227,6 +232,10 @@
         push dx
         push si
         push di
+          
+        xor ax, ax
+        xor si, si
+        xor di, di
         
         mov al, numeroPalabras
         mov bx, 0Ah 
@@ -235,11 +244,11 @@
         
             div bx
             add dx, 30h
-            mov stringPalabrasInvertidas[si], dl
-            xor dx, dx
+            mov stringPalabrasInvertidas[si], ah
+            xor ah, ah
             inc si
             
-            cmp ax, 0h
+            cmp al, 0h
             jne division
         
         invertirString:
@@ -249,7 +258,8 @@
             
             invertir:
             
-                mov stringPalabras[di], stringPalabrasInvertido[si]
+                mov al, stringPalabrasInvertidas[si]
+                mov stringPalabras[di], al
                 inc di
                 dec si
                 
@@ -268,9 +278,20 @@
     
     mostrarPalabras proc
         
+        push ax
         
+        mov ax, 09h
+        lea dx, quintoMensaje
+        int 21h
         
+        mov ax, 09h
+        lea dx, stringPalabras
+        int 21h
         
+        pop ax
+        
+        ret 
+          
     mostrarPalabras endp
     
 end code
