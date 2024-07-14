@@ -37,8 +37,8 @@
     call escribirArchivo
     call leerArchivo
     call contarString
-    call transformarNumero
-    call mostrarPalabras
+    ;call transformarNumero
+    ;call mostrarPalabras
     ;call menu
              
     mov ah, 04ch
