@@ -8,12 +8,10 @@
     manejador dw 0
     
     primerMensaje db "Se ha creado el archivo satisfactoriamente.", 13, 10, 10, "$"
-    segundoMensaje db "Se ha abierto el archivo exitosamente, AL contiene el handle o identificador unico del archivo", 13, 10, 10, "$"
+    segundoMensaje db 13, 10, 10, "Se ha abierto el archivo exitosamente, AL contiene el handle o identificador unico del archivo.", 13, 10, 10, "$"
     tercerMensaje db "Se ha escrito en el archivo adecuadamente.", 13, 10, 10, "$"
     cuartoMensaje db "Se ha leido el archivo apropiadamente.", 13, 10, 10, "$"
-    quintoMensaje db "El numero de palabras del contenido es: ", "$"
-    
-    pausa db "Pulse cualquier tecla para continuar.", 13, 10, 10, "$" 
+    quintoMensaje db 13, 10, 10, "El numero de palabras del contenido es: ", "$"
      
     inicioLectura db "Digite el mensaje deseado a almacenar en un archivo: ", 13, 10, 10, 9, "- ", "$"
     finalLectura db 13, 10, 10, "Se ha registrado el siguiente mensaje: ", 13, 10, 10, 9, "- ", "$"
@@ -23,8 +21,8 @@
     textoLeido db 255 dup ("$")
     
     numeroPalabras db 0h
-    stringPalabrasInvertidas 3 dup("$")
-    stringPalabras 3 dup("$")
+    stringPalabrasInvertidas 4 dup("$")
+    stringPalabras 4 dup("$")
     
     bandera db 0h
        
@@ -42,9 +40,22 @@
     call transformarNumero
     call mostrarPalabras
     ;call menu
-   
-    mov ax, 04ch
+             
+    mov ah, 04ch
     int 21h
+    
+    pausa proc
+        
+        push ax
+        
+        mov ah, 01h
+        int 21h
+            
+        pop ax
+        
+        ret
+     
+    pausa endp
     
     crearArchivo proc
         
@@ -61,6 +72,12 @@
         
         mov manejador, ax
         
+        mov ah, 09h
+        lea dx, primerMensaje
+        int 21h
+        
+        call pausa
+               
         pop dx
         pop cx
         pop ax
@@ -131,6 +148,12 @@
         
         int 21h
         
+        mov ah, 09h
+        lea dx, segundoMensaje
+        int 21h
+        
+        call pausa
+        
         pop dx
         pop cx
         pop ax
@@ -153,6 +176,12 @@
         lea dx, texto
         
         int 21h
+        
+        mov ah, 09h
+        lea dx, tercerMensaje
+        int 21h
+        
+        call pausa
         
         pop dx
         pop cx
@@ -177,11 +206,19 @@
         lea dx, textoLeido
         
         int 21h
+        
+        mov ah, 09h
+        lea dx, cuartoMensaje
+        int 21h
+        
+        call pausa
          
         pop dx
         pop cx
         pop bx
         pop ax
+        
+        ret
        
     leerArchivo endp 
     
@@ -285,11 +322,11 @@
         
         push ax
         
-        mov ax, 09h
+        mov ah, 09h
         lea dx, quintoMensaje
         int 21h
         
-        mov ax, 09h
+        mov ah, 09h
         lea dx, stringPalabras
         int 21h
         
