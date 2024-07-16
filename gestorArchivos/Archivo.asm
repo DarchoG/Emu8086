@@ -4,7 +4,7 @@
 
 .data
 
-    direccion db "C:\emu8086\MyBuild\prueba.txt", 0
+    direccion db "C:\emu8086\MyBuild\Texto.txt", 0
     manejador dw 0
     
     primerMensaje db "1.- Se ha creado el archivo satisfactoriamente.", 13, 10, 10, "$"
@@ -12,6 +12,7 @@
     tercerMensaje db "3.- Se ha escrito en el archivo adecuadamente.", 13, 10, 10, "$"
     cuartoMensaje db "4.- Se ha leido el archivo apropiadamente.", 13, 10, 10, "$"
     quintoMensaje db "5.- El numero de palabras del contenido es: ", "$"
+    sextoMensaje db 13, 10, 10,"6.- Desea borrar el archivo? ", 13, 10, 10, 9, "1.- Si",13, 10, 9, "2.- No", 13, 10, 10, "Como desea operar? ", "$"
      
     inicioLectura db "Digite el mensaje deseado a almacenar en un archivo: ", 13, 10, 10, 9, "- ", "$"
     finalLectura db 13, 10, 10, "Se ha registrado el siguiente mensaje: ", 13, 10, 10, 9, "- ", "$"
@@ -39,7 +40,7 @@
     call contarString
     call transformarNumero
     call mostrarPalabras
-    ;call menu
+    call menu
              
     mov ah, 04ch
     int 21h
@@ -328,7 +329,8 @@
         invertirString:
             
             xor di, di
-            mov ax, si
+            dec si
+            mov bx, si
             
             invertir:
             
@@ -337,7 +339,7 @@
                 inc di
                 dec si
                 
-                cmp di, ax
+                cmp si, -1h
                 jne invertir
                 
                 pop di
@@ -366,6 +368,52 @@
         
         ret 
           
-    mostrarPalabras endp
+    mostrarPalabras endp 
+    
+    menu proc
+        
+        push ax
+        push dx
+        
+        mov ah, 09h
+        lea dx, sextoMensaje
+        int 21h
+        
+        mov ah, 01h
+        int 21h
+        
+        sub al, 30h
+        
+        cmp al, 01h
+        jne retorno
+        
+        call borrarArchivo
+               
+        retorno:
+        
+        pop dx
+        pop ax
+        
+        ret
+            
+    menu endp
+    
+    borrarArchivo proc
+        
+        push ax
+        push dx
+        
+        mov ax, 0h
+        mov ah, 41h
+        lea dx, direccion
+        
+        int 21h
+        
+        pop dx
+        pop ax
+        
+        ret
+          
+    borrarArchivo endp
     
 end code
