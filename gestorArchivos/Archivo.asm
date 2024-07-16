@@ -7,11 +7,11 @@
     direccion db "C:\emu8086\MyBuild\prueba.txt", 0
     manejador dw 0
     
-    primerMensaje db "Se ha creado el archivo satisfactoriamente.", 13, 10, 10, "$"
-    segundoMensaje db 13, 10, 10, "Se ha abierto el archivo exitosamente, AL contiene el handle o identificador unico del archivo.", 13, 10, 10, "$"
-    tercerMensaje db "Se ha escrito en el archivo adecuadamente.", 13, 10, 10, "$"
-    cuartoMensaje db "Se ha leido el archivo apropiadamente.", 13, 10, 10, "$"
-    quintoMensaje db 13, 10, 10, "El numero de palabras del contenido es: ", "$"
+    primerMensaje db "1.- Se ha creado el archivo satisfactoriamente.", 13, 10, 10, "$"
+    segundoMensaje db 13, 10, 10, "2.- Se ha abierto el archivo exitosamente.", 13, 10, 10, "$"
+    tercerMensaje db "3.- Se ha escrito en el archivo adecuadamente.", 13, 10, 10, "$"
+    cuartoMensaje db "4.- Se ha leido el archivo apropiadamente.", 13, 10, 10, "$"
+    quintoMensaje db "5.- El numero de palabras del contenido es: ", "$"
      
     inicioLectura db "Digite el mensaje deseado a almacenar en un archivo: ", 13, 10, 10, 9, "- ", "$"
     finalLectura db 13, 10, 10, "Se ha registrado el siguiente mensaje: ", 13, 10, 10, 9, "- ", "$"
@@ -37,8 +37,8 @@
     call escribirArchivo
     call leerArchivo
     call contarString
-    ;call transformarNumero
-    ;call mostrarPalabras
+    call transformarNumero
+    call mostrarPalabras
     ;call menu
              
     mov ah, 04ch
@@ -199,6 +199,8 @@
         push cx
         push dx
         
+        call restablecerPuntero
+        
         mov ax, 0h
         mov ah, 3Fh
         mov bx, manejador
@@ -220,7 +222,31 @@
         
         ret
        
-    leerArchivo endp 
+    leerArchivo endp
+    
+    restablecerPuntero proc
+        
+        push ax
+        push bx
+        push cx
+        push dx
+        
+        mov ax, 0h 
+        mov ah, 42h
+        mov bx, manejador
+        mov cx, 0h
+        mov dx, 0h
+        
+        int 21h
+        
+        pop dx
+        pop cx
+        pop bx
+        pop ax
+        
+        ret
+              
+    restablecerPuntero endp
     
     contarString proc
         
@@ -253,12 +279,18 @@
                jne leerLetra
                
                mov bandera, 0h
-               inc bl
+               inc numeroPalabras
+               jmp leerLetra
            
        finContar:
        
-           mov numeroPalabras, bl
+           cmp bandera, 0h
+           je retornar
            
+           inc numeroPalabras
+           
+           retornar:
+                
            pop si
            pop bx
            pop ax
