@@ -401,7 +401,14 @@
     borrarArchivo proc
         
         push ax
+        push bx
         push dx
+        
+        mov ax, 0h
+        mov ah, 3Eh
+        mov bx, manejador
+        
+        int 21h
         
         mov ax, 0h
         mov ah, 41h
@@ -410,6 +417,7 @@
         int 21h
         
         pop dx
+        pop bx
         pop ax
         
         ret
