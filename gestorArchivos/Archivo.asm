@@ -78,6 +78,14 @@
         int 21h
         
         call pausa
+        
+        mov ax, 0h
+        mov ah, 3Eh
+        mov bx, manejador
+        
+        int 21h
+        
+        call cerrarArchivo
                
         pop dx
         pop cx
@@ -85,7 +93,25 @@
         
         ret    
                   
-    crearArchivo endp
+    crearArchivo endp 
+    
+    cerrarArchivo proc
+        
+        push ax
+        push bx
+        
+        mov ax, 0h
+        mov ah, 3Eh
+        mov bx, manejador
+        
+        int 21h
+        
+        pop bx
+        pop ax
+        
+        ret
+          
+    cerrarArchivo endp
     
     leerString proc
         
@@ -404,11 +430,7 @@
         push bx
         push dx
         
-        mov ax, 0h
-        mov ah, 3Eh
-        mov bx, manejador
-        
-        int 21h
+        call cerrarArchivo
         
         mov ax, 0h
         mov ah, 41h
