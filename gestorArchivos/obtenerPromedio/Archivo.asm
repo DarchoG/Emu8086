@@ -30,6 +30,7 @@
     call capturaNumeros
     call metodoOrdenamiento
     call obtenerPromedio
+    call obtenerMediana
     
     mov ah, 04ch
     int 21h
@@ -200,6 +201,8 @@
     
     obtenerDecimales macro numero, cantidad, resultado
         
+        local decimales, finalDecimales
+        
         push ax
         push bx
         push cx
@@ -222,7 +225,7 @@
         decimales:
         
             cmp dx, 0h
-            je Final
+            je finalDecimales
             
             mov ax, dx
             xor dx, dx 
@@ -236,11 +239,11 @@
             inc si 
             
             cmp si, 05h
-            je final
+            je finalDecimales
             
             jmp decimales     
         
-        final:
+        finalDecimales:
         
         pop di
         pop si
@@ -250,6 +253,10 @@
     endm    
     
     obtenerPromedio proc
+        
+        push ax
+        push bx
+        push si
         
         xor ax, ax
         xor bx, bx    
@@ -265,12 +272,68 @@
             
             cmp cantidadDatos, si
             jne sumatoria
-                          
-            call pausa              
+                                        
             obtenerDecimales ax, cantidadDatos, promedio
+            
+            pop si
+            pop bx
+            pop ax
             
             ret
               
     obtenerPromedio endp
+    
+    obtenerMediana proc
+        
+        push ax
+        push bx
+        push cx
+        
+        mov ax, cantidadDatos
+        mov bx, 02h
+        
+        div bx
+        
+        cmp dx, 0h ; Comprobar paridad
+        jne impar
+        
+        mov ax, cantidadDatos
+        inc ax
+        mov si, ax
+        
+        div bx
+        
+        mov bl, datosEntradaOrdenados[si]
+        mov mediana[0h], bl
+        
+        jmp finalMediana    
+        
+        impar:
+        
+            mov ax, cantidadDatos
+            div bx
             
+            mov bx, ax
+            xor ax, ax
+            
+            mov cl, datosEntradaOrdenados[bx]
+            sub cl, "0"
+            add ax, cx
+            
+            mov cl, datosEntradaOrdeados[bx + 01h]
+            sub cl, "0"
+            add ax, cx
+            
+            obtenerDecimales ax, 02h, mediana   
+                     
+         finalMediana:
+         
+            pop cx
+            pop bx
+            pop ax
+            
+            ret    
+                
+    obtenerMediana endp
+                   
 end code
