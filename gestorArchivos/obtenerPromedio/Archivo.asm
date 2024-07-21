@@ -247,6 +247,7 @@
         
         pop di
         pop si
+        pop cx
         pop bx
         pop ax       
         
@@ -287,7 +288,7 @@
         
         push ax
         push bx
-        push cx
+        push cx 
         
         mov ax, cantidadDatos
         mov bx, 02h
@@ -295,32 +296,30 @@
         div bx
         
         cmp dx, 0h ; Comprobar paridad
-        jne impar
-        
-        mov ax, cantidadDatos
-        inc ax
+        je par
+       
         mov si, ax
         
-        div bx
-        
         mov bl, datosEntradaOrdenados[si]
-        mov mediana[0h], bl
+        xor si, si
+        mov mediana[si[], bl
         
         jmp finalMediana    
         
-        impar:
-        
-            mov ax, cantidadDatos
-            div bx
+        par:
+            
+            dec ax
             
             mov bx, ax
             xor ax, ax
+            xor cx, cx
             
             mov cl, datosEntradaOrdenados[bx]
             sub cl, "0"
             add ax, cx
-            
-            mov cl, datosEntradaOrdeados[bx + 01h]
+                      
+            inc bx          
+            mov cl, datosEntradaOrdenados[bx]
             sub cl, "0"
             add ax, cx
             
