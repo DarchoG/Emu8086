@@ -340,14 +340,17 @@
                 
     obtenerMediana endp
     
-    obtenerModa proc      
+    obtenerModa proc
+        
+       push ax
+       push bx
+       push si
+       push di      
         
        xor ax, ax
        xor bx, bx 
        xor si, si
        xor di, di
-       
-       call pausa
         
        bucleModa:
    
@@ -376,14 +379,19 @@
                 
                 restablecerArray:
                 
-                    cmp di, 0h
-                    je agregarValorAlto 
+                    cmp di, -1h
+                    je restablecerDI ; agregarValorAlto y es restablecido el valor a 0. 
                 
                     mov moda[di], "$"
                     dec di
                                   
                     jmp restablecerArray
-                
+                    
+                    restablecerDI:
+                    
+                        inc di
+                        jmp agregarValorAlto
+                                   
           agregarValorAlto:
           
                 mov bl, "0"
