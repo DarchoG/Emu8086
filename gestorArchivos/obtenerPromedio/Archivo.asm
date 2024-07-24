@@ -7,6 +7,11 @@
     titulo db "--- Moda, Media y Mediana ---", 13, 10, 10, "$"
     bienvenida db "Escriba los numeros de una sola cifra deseados a interpretar (Enter para terminar su captura).", 13, 10, 10, "- ", "$"
     
+    resultados db 13, 10, 10, "--- Resultados --- ", 13, 10, 10, "$"
+    promedioTexto db "Media: ", "$"
+    medianaTexto db 10, 13, "Mediana: ", "$"
+    modaTexto db 10, 13, "Moda: ", "$"
+    
     datosEntrada db 255 dup ("$")
     cantidadDatos dw 0h
     
@@ -20,7 +25,7 @@
     
     promedio db "0.000", "$"
     mediana db "0.000", "$"
-    moda db 10 dup("$")
+    moda db 11 dup("$")
     modaValorAlto db 0h
     
    
@@ -29,12 +34,13 @@
     mov ax, @data
     mov ds, ax
     
-    call Inicio
+    call inicio
     call capturaNumeros
     call metodoOrdenamiento
     call obtenerPromedio
     call obtenerMediana
     call obtenerModa
+    call mostrarResultados
     
     mov ah, 04ch
     int 21h
@@ -52,7 +58,7 @@
         
     endp pusa
     
-    proc Inicio
+    proc inicio
         
         push ax
         push dx
@@ -71,7 +77,7 @@
               
         ret      
     
-    Inicio endp
+    inicio endp
     
     capturaNumeros proc
         
@@ -413,5 +419,63 @@
             ret
    
     obtenerModa endp
+    
+    mostrarResultados proc
+        
+        push ax
+        push dx
+        
+        mov ah, 09h
+        lea dx, resultados
+        int 21h
+        
+        mov ah, 09h
+        lea dx, promedioTexto
+        int 21h
+        
+        mov ah, 09h
+        lea dx, promedio
+        int 21h
+        
+        mov ah, 09h
+        lea dx, medianaTexto
+        int 21h
+        
+        mov ah, 09h
+        lea dx, mediana
+        int 21h
+        
+        mov ah, 09h
+        lea dx, modaTexto
+        int 21h
+        
+        mostrarValoresModa:
+        
+            mov ah, 02h
+            mov dl, moda[si]
+            int 21h
+            
+            inc si
+            cmp moda[si], "$"
+            je omitirComa 
+            
+            mov ah, 02h
+            mov dl, 02ch
+            int 21h
+                
+            mov ah, 02h
+            mov dl, 020h
+            int 21h
+            
+            jmp mostrarValoresModa
+            
+            omitirComa: 
+
+        pop dx
+        pop ax
+        
+        ret
+        
+    mostrarResultados endp
                    
 end code
