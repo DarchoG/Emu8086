@@ -20,6 +20,9 @@
     
     promedio db "0.000", "$"
     mediana db "0.000", "$"
+    moda db 10 dup("$")
+    modaValorAlto db 0h
+    
    
 .code
 
@@ -31,6 +34,7 @@
     call metodoOrdenamiento
     call obtenerPromedio
     call obtenerMediana
+    call obtenerModa
     
     mov ah, 04ch
     int 21h
@@ -288,10 +292,11 @@
         
         push ax
         push bx
-        push cx 
-        
+        push cx
+
         mov ax, cantidadDatos
         mov bx, 02h
+        mov dx, 0h
         
         div bx
         
@@ -334,5 +339,71 @@
             ret    
                 
     obtenerMediana endp
+    
+    obtenerModa proc      
+        
+       xor ax, ax
+       xor bx, bx 
+       xor si, si
+       xor di, di
+       
+       call pausa
+        
+       bucleModa:
+   
+            cmp si, 0Bh
+            je finModa
+            
+            mov al, frecuencia[si]
+            
+            cmp al, modaValorAlto
+            jg establecerValorAlto
+            
+            cmp al, 0h ; Necesario para omitir el caso especial donde valor mas alto es 0.
+            je omitirValor  
+            
+            cmp al, modaValorAlto
+            je agregarValorAlto
+            
+            omitirValor:
+            
+            inc si
+            jmp bucleModa
+            
+          establecerValorAlto:
+            
+                mov modaValorAlto, al
+                
+                restablecerArray:
+                
+                    cmp di, 0h
+                    je agregarValorAlto 
+                
+                    mov moda[di], "$"
+                    dec di
+                                  
+                    jmp restablecerArray
+                
+          agregarValorAlto:
+          
+                mov bl, "0"
+                add bx, si
+                
+                mov moda[di], bl
+                inc si
+                inc di
+                
+                jmp bucleModa 
+          
+       finModa:     
+                
+            pop di
+            pop si
+            pop bx
+            pop ax
+            
+            ret
+   
+    obtenerModa endp
                    
 end code
