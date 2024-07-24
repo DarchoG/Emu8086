@@ -4,6 +4,8 @@
 
 .data
 
+    direccion db "C:\emu8086\MyBuild\Estadistica", 0
+
     titulo db "--- Moda, Media y Mediana ---", 13, 10, 10, "$"
     bienvenida db "Escriba los numeros de una sola cifra deseados a interpretar (Enter para terminar su captura).", 13, 10, 10, "- ", "$"
     
