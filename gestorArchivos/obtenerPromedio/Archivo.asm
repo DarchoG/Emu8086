@@ -4,7 +4,13 @@
 
 .data
 
-    direccion db "C:\emu8086\MyBuild\Estadistica", 0
+    carpeta db "C:\emu8086\MyBuild\Estadistica", 0
+    nombreArchivo db 64 dup ("$")
+    extension db ".txt","$"
+    direccionAbsoluta 255 dup ("$")
+    handle db 0
+    
+    primerTextoArchivo db "--- Numeros Registrados ---" 13, 10, 10, "$"
 
     titulo db "--- Moda, Media y Mediana ---", 13, 10, 10, "$"
     bienvenida db "Escriba los numeros de una sola cifra deseados a interpretar (Enter para terminar su captura).", 13, 10, 10, "- ", "$"
@@ -14,6 +20,11 @@
     medianaTexto db 10, 13, "Mediana: ", "$"
     modaTexto db 10, 13, "Moda: ", "$"
     
+    indicacionArchivo db 13, 10, 10,"Ingrese el nombre del archivo a crear", 13, 10, 10, "- ", "$"
+    
+    primerMensaje db 13, 10, 10, "Se ha registrado satisfactoriamente los datos en la direccion : ", "$"
+    segundoMensaje db 13, 10, 10, "Desea borrar el contenido creado? ", 13, 10, 10, "1.- Si", 13, 10, "2.- No", 13, 10, 10 "Como desea operar? ", "$" 
+                                     
     datosEntrada db 255 dup ("$")
     cantidadDatos dw 0h
     
@@ -43,6 +54,8 @@
     call obtenerMediana
     call obtenerModa
     call mostrarResultados
+    ;call crearArchivo
+    ;call menu
     
     mov ah, 04ch
     int 21h
@@ -349,18 +362,18 @@
     obtenerMediana endp
     
     obtenerModa proc
+                
+        push ax
+        push bx
+        push si
+        push di      
         
-       push ax
-       push bx
-       push si
-       push di      
+        xor ax, ax
+        xor bx, bx 
+        xor si, si
+        xor di, di
         
-       xor ax, ax
-       xor bx, bx 
-       xor si, si
-       xor di, di
-        
-       bucleModa:
+        bucleModa:
    
             cmp si, 0Bh
             je finModa
@@ -411,7 +424,7 @@
                 
                 jmp bucleModa 
           
-       finModa:     
+        finModa:     
                 
             pop di
             pop si
@@ -479,5 +492,249 @@
         ret
         
     mostrarResultados endp
-                   
+    
+    crearCarpeta proc
+            
+        push ax
+        push dx
+            
+        mov ah, 39h
+        lea dx, carpeta
+        int 21h
+             
+        pop dx
+        pop ax
+        
+        ret
+        
+    crearCarpeta endp
+        
+    crearArchivo proc 
+        
+        push ax
+        push bx
+        push cx
+        push dx        
+        push si
+        push di
+        
+        call crearCarpeta
+        
+        mov ah, 09h
+        lea dx indicacionArchivo
+        int 21h
+        
+        obtenerNombre:
+        
+            mov ah, 01h
+            int 21h
+            
+            cmp al, "A"
+            jl obtenerNombre
+            
+            cmp al, "z"
+            jg obtenerNombre
+            
+            mov nombreArchivo[si], al
+            inc si
+            
+            cmp si, 3Ah ; 59 en Decimal, 6 caracteres menos por la extension, inicio en 0 y disponer de un caracter "$".
+            jne obtenerNombre
+            
+            xor di, di
+            
+         agregarExtension:
+         
+            mov al, extension[di]
+            mov nombreArchivo[si], al
+            
+            inc si
+            inc di
+            
+            cmp di, 04h
+            jne agregarExtension
+            
+            xor si, si
+            xor di, di
+         
+         generarDireccionArchivo:
+         
+            mov al, carpeta[si]
+            
+            mov direccionAbsoluta, al
+            
+            inc si
+            
+            cmp carpeta[si], 0h ; Caracter Nulo
+            jne generarDireccionArchivo
+            
+         copiarNombreArchivo:
+         
+            mov al, nombreArchivo[di]
+            mov direccionAbsoluta[si], al
+            
+            inc si
+            inc di
+            
+            cmp nombreArchivo[di], "$"
+            jne copiarNombreArchivo
+            
+            mov direccionAbsoluta[si], 0h ; Incorporar el caracter nulo, necesario para indicar el fin de la ruta
+            inc si
+            
+            mov direccionAbsoluta[si], "$" ; Incorporar  un "$" para mostrar en pantalla la direccion final del archivo creado
+          
+         ; Crear Archivo 
+            
+         mov ax, 0h
+         mov ah, 3Ch
+         mov cx, 0h
+         lea dx, direccionAbsoluta 
+         int 21h
+         
+         mov handle, ax
+         
+         ; Cerrar Archivo
+         
+         mov ax, 0h
+         mov ah, 3Eh
+         mov bx, handle
+         int 21h
+         
+         ; Abrir Archivo
+         
+         mov ax, 0h
+         mov ah, 3Dh
+         mov al, 01h ; Modo Lectura
+         lea dx, direccionAbsoluta
+         int 21h
+         
+         mov handle, ax
+         
+         call escribirString
+         call cerrarArchivo
+         
+         pop di
+         pop si
+         pop dx
+         pop cx
+         pop bx
+         pop ax
+         
+         ret
+           
+  crearArchivo endp
+  
+  escribirString macro string
+    
+        local bucleString 
+    
+        push ax
+        push bx
+        push cx
+        push dx
+        
+        xor si, si
+        
+        bucleString: 
+            
+            mov ah, 40h
+            mov bx, manejador
+            mov cx, 01h
+            mov dl, string[si]
+            int 21h
+            
+            inc si
+            cmp string, "$"
+            jne bucleString 
+            
+            xor si, si
+            
+        pop dx
+        pop cx
+        pop bx
+        pop ax    
+    
+  endm  
+  
+  escribirArchivo proc
+        
+        push ax
+        push bx
+        push cx
+        push dx
+        push si
+        
+        xor dx, dx
+        xor si, si
+        
+        escribirString primerTextoArchivo
+        
+        segundoTexto: ; Numeros digitados por el usuario
+       
+            mov ah, 40h
+            mov bx, manejador
+            mov cx, 01h
+            mov dl, datosEntrada[si]
+            int 21h
+            
+            inc si
+            cmp datosEntrada[si], "$"
+            je segundoTextoOmitirComa
+            
+            mov ah, 40h
+            mov bx, manejador
+            mov cx, 01h
+            mov dl, ","
+            int 21h
+            
+            mov ah, 40h
+            mov bx, manejador
+            mov cx, 01h
+            mov dl, " "
+            int 21h
+            
+            jmp segundoTexto
+            
+            segundoTextOmitirComa:
+                        
+        escribirString resultados
+        escribirString promedioTexto
+        escribirString promedio
+        escribirString medianaTexto
+        escribirString mediana
+        escribirString modaTexto
+        escribirString moda
+        
+        pop si
+        pop dx
+        pop cx
+        pop bx
+        pop ax
+        
+        ret 
+                                 
+  escribirArchivo endp
+  
+  cerrarArchivo proc
+    
+        push ax
+        push bx
+        push cx
+        push dx
+        
+        mov ax, 0h
+        mov ah, 3Eh
+        mov bx, handle
+        int 21h
+        
+        pop dx
+        pop cx
+        pop bx
+        pop ax
+        
+        ret
+      
+  cerrarArchivo endp
+                     
 end code
