@@ -8,9 +8,9 @@
     nombreArchivo db 64 dup ("$")
     extension db ".txt","$"
     direccionAbsoluta 255 dup ("$")
-    handle db 0
+    handle dw 0
     
-    primerTextoArchivo db "--- Numeros Registrados ---" 13, 10, 10, "$"
+    primerTextoArchivo db "--- Numeros Registrados ---", 13, 10, 10, "$"
 
     titulo db "--- Moda, Media y Mediana ---", 13, 10, 10, "$"
     bienvenida db "Escriba los numeros de una sola cifra deseados a interpretar (Enter para terminar su captura).", 13, 10, 10, "- ", "$"
@@ -23,7 +23,7 @@
     indicacionArchivo db 13, 10, 10,"Ingrese el nombre del archivo a crear", 13, 10, 10, "- ", "$"
     
     primerMensaje db 13, 10, 10, "Se ha registrado satisfactoriamente los datos en la direccion : ", "$"
-    segundoMensaje db 13, 10, 10, "Desea borrar el contenido creado? ", 13, 10, 10, "1.- Si", 13, 10, "2.- No", 13, 10, 10 "Como desea operar? ", "$" 
+    segundoMensaje db 13, 10, 10, "Desea borrar el contenido creado? ", 13, 10, 10, "1.- Si", 13, 10, "2.- No", 13, 10, 10, "Como desea operar? ", "$" 
                                      
     datosEntrada db 255 dup ("$")
     cantidadDatos dw 0h
@@ -54,8 +54,8 @@
     call obtenerMediana
     call obtenerModa
     call mostrarResultados
-    ;call crearArchivo
-    ;call menu
+    call crearArchivo
+    call menu
     
     mov ah, 04ch
     int 21h
@@ -521,13 +521,19 @@
         call crearCarpeta
         
         mov ah, 09h
-        lea dx indicacionArchivo
+        lea dx, indicacionArchivo
         int 21h
+        
+        xor si, si
+        
         
         obtenerNombre:
         
             mov ah, 01h
             int 21h
+            
+            cmp al, 0Dh
+            je finObtenerNombre
             
             cmp al, "A"
             jl obtenerNombre
@@ -540,6 +546,8 @@
             
             cmp si, 3Ah ; 59 en Decimal, 6 caracteres menos por la extension, inicio en 0 y disponer de un caracter "$".
             jne obtenerNombre
+            
+            finObtenernombre:
             
             xor di, di
             
@@ -556,17 +564,20 @@
             
             xor si, si
             xor di, di
-         
+                     
          generarDireccionArchivo:
          
             mov al, carpeta[si]
             
-            mov direccionAbsoluta, al
+            mov direccionAbsoluta[si], al
             
             inc si
             
             cmp carpeta[si], 0h ; Caracter Nulo
             jne generarDireccionArchivo
+            
+            mov direccionAbsoluta[si], "\"
+            inc si
             
          copiarNombreArchivo:
          
@@ -611,7 +622,7 @@
          
          mov handle, ax
          
-         call escribirString
+         call escribirArchivo
          call cerrarArchivo
          
          pop di
@@ -638,14 +649,15 @@
         
         bucleString: 
             
+            mov ax, 0h
             mov ah, 40h
-            mov bx, manejador
+            mov bx, handle
             mov cx, 01h
             mov dl, string[si]
             int 21h
             
             inc si
-            cmp string, "$"
+            cmp string[si], "$"
             jne bucleString 
             
             xor si, si
@@ -668,12 +680,14 @@
         xor dx, dx
         xor si, si
         
+        call pausa
+        
         escribirString primerTextoArchivo
         
         segundoTexto: ; Numeros digitados por el usuario
        
             mov ah, 40h
-            mov bx, manejador
+            mov bx, handle
             mov cx, 01h
             mov dl, datosEntrada[si]
             int 21h
@@ -683,20 +697,20 @@
             je segundoTextoOmitirComa
             
             mov ah, 40h
-            mov bx, manejador
+            mov bx, handle
             mov cx, 01h
             mov dl, ","
             int 21h
             
             mov ah, 40h
-            mov bx, manejador
+            mov bx, handle
             mov cx, 01h
             mov dl, " "
             int 21h
             
             jmp segundoTexto
             
-            segundoTextOmitirComa:
+            segundoTextoOmitirComa:
                         
         escribirString resultados
         escribirString promedioTexto
@@ -720,21 +734,47 @@
     
         push ax
         push bx
-        push cx
-        push dx
         
         mov ax, 0h
         mov ah, 3Eh
         mov bx, handle
         int 21h
         
-        pop dx
-        pop cx
         pop bx
         pop ax
         
         ret
       
   cerrarArchivo endp
+  
+  menu proc
+        
+        push ax
+        push dx
+        
+        mov ah, 09h
+        lea dx, segundoMensaje
+        int 21h
+        
+        mov ah, 01h
+        int 21h
+        
+        sub al, "0"
+        
+        cmp al, 02h
+        je  omitirBorrar
+        
+        mov ah, 3Ah
+        lea dx, carpeta
+        int 21h
+        
+        omitirBorrar:
+        
+        pop dx
+        pop ax
+             
+        ret
+         
+  menu endp
                      
 end code
