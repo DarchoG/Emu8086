@@ -686,8 +686,6 @@
         xor dx, dx
         xor si, si
         
-        call pausa
-        
         escribirString primerTextoArchivo
         
         xor di, di
@@ -779,6 +777,8 @@
         
         cmp al, 02h
         je  omitirBorrar
+        
+        call pausa
         
         mov ah, 3Ah
         lea dx, carpeta
