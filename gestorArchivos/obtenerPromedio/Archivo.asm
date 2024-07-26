@@ -9,6 +9,7 @@
     extension db ".txt","$"
     direccionAbsoluta 255 dup ("$")
     handle dw 0
+    stringAuxiliar db "$"
     
     primerTextoArchivo db "--- Numeros Registrados ---", 13, 10, 10, "$"
 
@@ -646,14 +647,19 @@
         push dx
         
         xor si, si
+        xor di, di
         
-        bucleString: 
+        bucleString:
+        
+            xor dx, dx 
             
             mov ax, 0h
             mov ah, 40h
             mov bx, handle
             mov cx, 01h
             mov dl, string[si]
+            mov stringAuxiliar[di], dl
+            mov dx, offset(stringAuxiliar)
             int 21h
             
             inc si
@@ -684,12 +690,18 @@
         
         escribirString primerTextoArchivo
         
+        xor di, di
+        
         segundoTexto: ; Numeros digitados por el usuario
+        
+            xor dx, dx
        
             mov ah, 40h
             mov bx, handle
             mov cx, 01h
             mov dl, datosEntrada[si]
+            mov stringAuxiliar[di], dl
+            mov dx, offset(stringAuxiliar)
             int 21h
             
             inc si
@@ -700,12 +712,16 @@
             mov bx, handle
             mov cx, 01h
             mov dl, ","
+            mov stringAuxiliar[di], dl
+            mov dx, offset(stringAuxiliar)
             int 21h
             
             mov ah, 40h
             mov bx, handle
             mov cx, 01h
             mov dl, " "
+            mov stringAuxiliar[di], dl
+            mov dx, offset(stringAuxiliar)
             int 21h
             
             jmp segundoTexto
