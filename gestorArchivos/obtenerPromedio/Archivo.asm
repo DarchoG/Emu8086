@@ -61,19 +61,6 @@
     mov ah, 04ch
     int 21h
     
-    proc pausa
-        
-        push ax
-        
-        mov ah, 01h
-        int 21h   
-          
-        pop ax
-        
-        ret
-        
-    endp pusa
-    
     proc inicio
         
         push ax
@@ -645,6 +632,8 @@
         push bx
         push cx
         push dx
+        push si
+        push di
         
         xor si, si
         xor di, di
@@ -667,44 +656,45 @@
             jne bucleString 
             
             xor si, si
-            
+        
+        pop di    
+        pop si
         pop dx
         pop cx
         pop bx
         pop ax    
     
-  endm  
+  endm
   
-  escribirArchivo proc
+  escribirLista macro string
+    
+        local bucleLista bucleListaOmitirComa
         
         push ax
         push bx
         push cx
         push dx
         push si
+        push di
         
-        xor dx, dx
         xor si, si
-        
-        escribirString primerTextoArchivo
-        
         xor di, di
         
-        segundoTexto: ; Numeros digitados por el usuario
+        bucleLista:
         
             xor dx, dx
        
             mov ah, 40h
             mov bx, handle
             mov cx, 01h
-            mov dl, datosEntrada[si]
+            mov dl, string[si]
             mov stringAuxiliar[di], dl
             mov dx, offset(stringAuxiliar)
             int 21h
-            
+    
             inc si
-            cmp datosEntrada[si], "$"
-            je segundoTextoOmitirComa
+            cmp string[si], "$"
+            je bucleListaOmitirComa
             
             mov ah, 40h
             mov bx, handle
@@ -722,17 +712,39 @@
             mov dx, offset(stringAuxiliar)
             int 21h
             
-            jmp segundoTexto
+            jmp bucleLista
             
-            segundoTextoOmitirComa:
-                        
+       bucleListaOmitirComa:
+       
+       pop di
+       pop si
+       pop dx
+       pop cx
+       pop bx
+       pop ax  
+    
+  endm
+  
+  escribirArchivo proc
+        
+        push ax
+        push bx
+        push cx
+        push dx
+        push si
+        
+        xor dx, dx
+        xor si, si
+        
+        escribirString primerTextoArchivo
+        escribirLista datosEntrada
         escribirString resultados
         escribirString promedioTexto
         escribirString promedio
         escribirString medianaTexto
         escribirString mediana
         escribirString modaTexto
-        escribirString moda
+        escribirLista moda
         
         pop si
         pop dx
@@ -778,7 +790,9 @@
         cmp al, 02h
         je  omitirBorrar
         
-        call pausa
+        mov ah, 41h
+        lea dx, direccionAbsoluta
+        int 21h
         
         mov ah, 3Ah
         lea dx, carpeta
