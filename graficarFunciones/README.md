@@ -13,9 +13,13 @@
 4.- Las coordenadas son obtenidas en el Excel adjuntado, siguiendo las siguientes reglas:
 
 - **Lineal:** Es agregado una pendiente equivalente a la división de 200/320 para adecuar la pendiente y tener una diagonal perfecta.
+  
 - **Cuadrática:** Es adicionado como pendiente arbitraria 5, con el objetivo de disponer una parábola más expendida, para obtener más coordenadas es empleada se calcularon las coordenadas haciendo uso de su función inversa.
+  
 - **Raíz:** Procedimiento equivalente con la cuadrática, es extendido hasta los 320 pixeles.
+  
 - **Senoidal:** Es evaluada la función con un valor constante que dictamina la frecuencia, posteriormente es multiplicado por 100 al retornar un valor que oscila entre 0 y 1 y sumado 100.
+  
 - **Circular:** Emplea las funciones coseno y seno asociadas a cada eje para obtener las coordenadas x, y, en seguida es multiplicado por el radio deseado y sumado valores absolutas para posicionar la circunferencia.
 
 # Interrupciones
