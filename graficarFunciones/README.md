@@ -27,5 +27,6 @@
 - **Int 10h (0h ah, 13 al):** Establece las características del display el digito almacenado en al, es decir colores y resolución.
 - **Int 10h (0ch ah, 0Fh al):** Al encontrarse el display activo muestra un píxel con el color aojado en al.
 - **Int 16h (01h ah):** Permite la lectura de un carácter del teclado sin interrumpir la ejecución del programa como la int 21h (01h ah).
-
-**Video Explicativo:** https://youtu.be/bvrbGdGxBqU
+  
+> [!TIP]
+> **Video Explicativo:** https://youtu.be/bvrbGdGxBqU
