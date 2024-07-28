@@ -56,4 +56,5 @@
 
 **pop:** Retorna el valor almacenado con push.
 
-**Video Explicativo:** https://youtu.be/FvSI5vadMdA
+> [!TIP]
+> **Video Explicativo:** https://youtu.be/FvSI5vadMdA
