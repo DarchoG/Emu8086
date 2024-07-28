@@ -172,6 +172,8 @@
         mov ah, 3Dh
         mov al, 02h
         lea dx, direccion
+
+        mov manejador, ax
         
         int 21h
         
