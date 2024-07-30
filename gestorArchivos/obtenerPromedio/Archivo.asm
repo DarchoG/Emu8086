@@ -316,7 +316,7 @@
         
         mov bl, datosEntradaOrdenados[si]
         xor si, si
-        mov mediana[si[], bl
+        mov mediana[si], bl
         
         jmp finalMediana    
         
