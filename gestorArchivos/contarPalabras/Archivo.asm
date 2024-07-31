@@ -78,13 +78,6 @@
         int 21h
         
         call pausa
-        
-        mov ax, 0h
-        mov ah, 3Eh
-        mov bx, manejador
-        
-        int 21h
-        
         call cerrarArchivo
                
         pop dx
