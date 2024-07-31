@@ -273,11 +273,9 @@
     contarString proc
         
        push ax
-       push bx
        push si
        
        xor ax, ax
-       xor bx, bx 
        xor si, si
        
        leerLetra:
@@ -314,7 +312,6 @@
            retornar:
                 
            pop si
-           pop bx
            pop ax
        
            ret     
