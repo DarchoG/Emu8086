@@ -10,11 +10,11 @@
     direccionAbsoluta 255 dup ("$")
     handle dw 0
     stringAuxiliar db "$"
-    
-    primerTextoArchivo db "--- Numeros Registrados ---", 13, 10, 10, "$"
 
     titulo db "--- Moda, Media y Mediana ---", 13, 10, 10, "$"
     bienvenida db "Escriba los numeros de una sola cifra deseados a interpretar (Enter para terminar su captura).", 13, 10, 10, "- ", "$"
+
+    primerTextoArchivo db "--- Numeros Registrados ---", 13, 10, 10, "$"
     
     resultados db 13, 10, 10, "--- Resultados --- ", 13, 10, 10, "$"
     promedioTexto db "Media: ", "$"
