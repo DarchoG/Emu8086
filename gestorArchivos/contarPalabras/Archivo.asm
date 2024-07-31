@@ -295,8 +295,8 @@
             
            incrementarContador: 
               
-               cmp bandera, 01h
-               jne leerLetra
+               cmp bandera, 0h
+               je leerLetra
                
                mov bandera, 0h
                inc numeroPalabras
