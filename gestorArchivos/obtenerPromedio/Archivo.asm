@@ -514,7 +514,6 @@
         
         xor si, si
         
-        
         obtenerNombre:
         
             mov ah, 01h
