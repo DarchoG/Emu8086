@@ -9,5 +9,5 @@ org 100h ; Empezar en la direccion 100h.
    ; Uso de la interrupcion 21h 09h, espera en DX la posicion de memoria de la variable a imprimir.   
 
    mov ah, 09h
-   lea dx, string
+   lea dx, string ; LEA = Load Effective Address, carga la dirección de memoria de la variable string.
    int 21h
