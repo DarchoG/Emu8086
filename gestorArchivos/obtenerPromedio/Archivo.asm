@@ -23,7 +23,7 @@
     
     indicacionArchivo db 13, 10, 10,"Ingrese el nombre del archivo a crear", 13, 10, 10, "- ", "$"
     
-    primerMensaje db 13, 10, 10, "Se ha registrado satisfactoriamente los datos en la direccion : ", "$"
+    primerMensaje db 13, 10, 10, "Se ha registrado satisfactoriamente los datos en la direccion : ", 13, 10, 10, "- ", "$"
     segundoMensaje db 13, 10, 10, "Desea borrar el contenido creado? ", 13, 10, 10, "1.- Si", 13, 10, "2.- No", 13, 10, 10, "Como desea operar? ", "$" 
                                      
     datosEntrada db 255 dup ("$")
@@ -744,6 +744,14 @@
         escribirString mediana
         escribirString modaTexto
         escribirLista moda
+        
+        mov ah, 09h
+        lea dx, primerMensaje
+        int 21h
+        
+        mov ah, 09h
+        lea dx, direccionAbsoluta
+        int 21h
         
         pop si
         pop dx
