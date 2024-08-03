@@ -1,10 +1,10 @@
 .model small ; Proporciona la cantidad y longitud de segmentos de codigo y datos disponiles.
 
-.stack 100h ; Pila de datos, permite el respaldo de datos y el return de los procedimientos. 
+.stack 100h ; Longitud de la pila de datos, permite el respaldo de datos y el return de los procedimientos. 
 
 .data ; Declaracion del segmento de datos.
 
-    ; Las variables necesitan disponer de un "$" al final para ser mostradas en pantalla con la interrupcion.
+    ; Las variables string necesitan disponer de un "$" al final para ser mostradas en pantalla con la interrupcion.
     
     instruccion db "Escribe un mensaje a ser almacenado ", 13, 10, 10, "- ", "$"
     bufferEscritura db 256 dup ("$") ; Reservamos un arreglo de 256 posiciones para la escritura, en todas sus posiciones reservara el simbolo "$".
