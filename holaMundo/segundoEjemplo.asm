@@ -12,6 +12,8 @@
     
     mov ax, @data
     mov ds, ax
+
+    ; Uso de la interrupcion 21h 09h, espera en DX la posicion de memoria de la variable a imprimir.   
     
     mov ah, 09h
     mov dx, offset(string) ; Carga la direccion en memoria de la variable string ubicada en el segmento de datos
