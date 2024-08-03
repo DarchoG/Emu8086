@@ -50,7 +50,7 @@
         
         cicloLectura: ; Definicion de una etiqueta para iterar bucles. 
             
-            ; Lectura de un caracter con echo (mostrarlo en palla).
+            ; Lectura de un caracter con echo (mostrarlo en pantalla).
             ; El resultado del caracter es almacenado en al.
             
             mov ah, 01h
