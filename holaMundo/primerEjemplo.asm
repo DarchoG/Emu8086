@@ -1,6 +1,6 @@
 org 100h ; Empezar en la direccion 100h.
     
-   jmp start ; Salto incondiconal, por lo tanto siempre ocurre, para evitar ejecutar. 
+   jmp start ; Salto incondiconal, por lo tanto siempre ocurre, para evitar ejecutar los datos almacenados como operaciones invalidas. 
 
    string db "Hello World", "$" ; Las variables necesitan disponer de un "$" al final para ser mostradas en pantalla con la interrupcion.
    
