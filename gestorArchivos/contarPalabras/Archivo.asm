@@ -417,7 +417,6 @@
     borrarArchivo proc
         
         push ax
-        push bx
         push dx
         
         call cerrarArchivo
@@ -429,7 +428,6 @@
         int 21h
         
         pop dx
-        pop bx
         pop ax
         
         ret
