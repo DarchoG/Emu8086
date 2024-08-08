@@ -158,17 +158,16 @@
     abrirArchivo proc 
         
         push ax
-        push cx
         push dx
         
         mov ax, 0h
         mov ah, 3Dh
         mov al, 02h
         lea dx, direccion
-
-        mov manejador, ax
         
         int 21h
+
+        mov manejador, ax
         
         mov ah, 09h
         lea dx, segundoMensaje
@@ -177,7 +176,6 @@
         call pausa
         
         pop dx
-        pop cx
         pop ax
         
         ret
