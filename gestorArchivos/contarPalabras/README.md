@@ -18,5 +18,5 @@
 
 **7.-** Muestra el resultado del conteo y desplegado un menú para determinar si es deseado borrar el archivo creado.
 
-> [!IMPORTANT]
-> **Video Explicativo:** PENDIENTE
+> [!TIP]
+> **Video Explicativo:** https://youtu.be/t4CxbLSmj4o
