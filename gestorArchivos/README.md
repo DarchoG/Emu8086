@@ -26,5 +26,5 @@ Encontraras los siguientes dos ejercicios que hacen uso de las interrupciones mo
 
 **Int 21h (42h ah):** Especifica el redireccionamiento del puntero de escritura o lectura, BX requiere el handle (manejador) y mediante CX y DX la posición deseada en CX la parte más significativa y en DX la menor. 
 
-> [!IMPORTANT]
-> **Video Explicativo:** PENDIENTE
+> [!TIP]
+> **Video Explicativo:** https://youtu.be/t4CxbLSmj4o
