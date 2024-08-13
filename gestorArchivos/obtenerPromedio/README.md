@@ -48,5 +48,5 @@ Emplea arreglos temporales de datos, cuenta la frecuencia de los datos y relacio
 
 **8.-** Ejecuta un menú, determina si borra el archivo y carpeta creada.
 
-> [!IMPORTANT]
-> **Video Explicativo:** PENDIENTE
+> [!TIP]
+> **Video Explicativo:** https://youtu.be/t4CxbLSmj4o
